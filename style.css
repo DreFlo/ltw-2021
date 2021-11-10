@@ -1,0 +1,85 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    overflow: hidden;
+    height: 100%;
+    scroll-behavior: smooth;
+}
+
+header {
+    width: 16vh;
+    display: flex;
+    justify-content: center;
+    align-items: right;
+    position: fixed;
+    z-index: 999;
+    background-color: aliceblue;
+    border-radius: 8px;
+    right: 15px;
+    top: 15px;
+}
+
+li {
+    list-style-type: none;
+}
+
+a:hover {
+    color:darkred;
+}
+
+a {
+    text-decoration: none;
+    color: darkblue;
+}
+
+section {
+    width: 100%;
+    float: left;
+    height: 100%;
+    position: relative;
+}
+
+#config {
+    background-color: blue;
+    /*animation-name: example;
+    animation-duration: 4s;*/
+}
+
+#game {
+    background-color: aqua;
+}
+
+#instructions {
+    background-color: brown;
+}
+
+#leaderboard {
+    display: flex;
+    justify-content: center;
+    background-color: whitesmoke;
+}
+
+/*
+@keyframes example {
+    from {background-color: blue;}
+    to {background-color: aqua;}
+}
+*/
+
+th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+    padding: 10px;
+}
+
+#classification {
+    align-self: center;
+    border-collapse: collapse;
+}
+
+tr:hover {
+    background-color: lightgray;
+}
