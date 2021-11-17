@@ -52,8 +52,67 @@ section {
     background-color: aqua;
 }
 
-#instructions {
-    background-color: brown;
+/* The Modal (background) */
+.instructions_modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+  
+  /* Modal Content */
+.instructions_content {
+    background-color: lightgray;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    border-radius: 8px;
+    width: 80%;
+    text-align: justify;
+}
+  
+  /* The Close Button */
+.instructions_close {
+    color: darkgrey;
+    float: right;
+    font-size: 50px;
+    font-weight: bold;
+    margin-top: -1%;
+}
+
+.instructions_close:hover, .instructions_close:focus {
+    color: rgb(77, 77, 77);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.inst_title {
+    font-size: xx-large;
+    font-weight: bold;
+}
+
+.inst_title::first-letter {
+    font-size: 120%;
+}
+
+.second_title {
+    font-size: x-large;
+}
+
+.second_title::first-letter {
+    font-size: 120%;
+}
+
+.content {
+    font-size: large;
+    margin-left: 1%;
 }
 
 #leaderboard {
@@ -82,4 +141,35 @@ th, td {
 
 tr:hover {
     background-color: lightgray;
+}
+
+board {
+    position: absolute;
+    top: 50px;
+    left: 50px;
+    width: 100vh;
+    height: 50vh;
+    border-radius: 50px;
+    background-color: chartreuse;
+}
+
+row {
+    position: absolute;
+    left : 15%;
+    border : 1px blue solid;
+}
+
+.house {
+    position: relative;
+    top: 0;
+    left: 0;
+    border: 1px green solid;
+}
+
+#topRow {
+    top : 5%;
+}
+
+#bottomRow {
+    bottom : 5%;
 }

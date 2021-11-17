@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Mancala</title>
+    <script type="text/javascript" src="mancala.js"></script>
     <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 
@@ -12,16 +13,78 @@
         <ul>
             <li><a href="#config">Configuration</a></li>
             <li><a href="#game">Game</a></li>
-            <li><a href="#instructions">Instructions</a></li>
             <li><a href="#leaderboard">Leaderboard</a></li>
+            <li> <button id="instructions_button"> Instructions </button></li>
         </ul>
     </header>
+
+    <div id="instructions" class="instructions_modal">
+        <div class="instructions_content">
+            <span class="instructions_close">&times;</span>
+            <p class = "inst_title">Instructions</p>
+            <p class = "second_title">Board:</p>
+            <p class = "content">The board is comprised by a series of cavities, to be personalized by the user, and two storage spots on either side.</p>
+            <p class = "content">Each user controls the side of the board they're facing and the warehouse to their right.</p>
+            <p class = "content">They will each have a customizable amount of seeds in each of their cavities, ready to be played.</p>
+            <p class = "second_title">How to Play:</p>
+            <p class = "content">Players play on a turn by turn basis, each having to seed each time, meaning they'll have to select one of their cavities
+                to start from and continue moving forward, dropping a seed in all the cavities they pass through, stopping when there are no more seeds.
+            </p>
+            <p class = "content">While seeding, if you encounter your own storage space, you are to seed there, continuing to the other player's side,
+                but if you happen to pass through the other player's storage, you are to skip ahead, not placing any seeds there.
+            </p>
+            <p class = "content">If the last seed spot is your own storage space, you have another turn.</p>
+            <p class = "content">If the last seed spot is one of your own and is empty, then you have the opporunity to increase the number of seeds
+                in your storage spot. You can collect that last seed and the seeds on the cavity opposite to the one you landed, on your opponent's side.
+            </p>
+            <p class = "second_title">Ending & Winning Conditions:</p>
+            <p class = "content">The game stops whenever one player can't continue to play, by having no seeds in any of their cavities, 
+                except the storage spot.</p>
+            <p class = "content">If the game ends, the one player who still has seeds in their own cavities, moves them to their own storage spot.</p>
+            <p class = "content">The winner is determined by whoever has the most seeds in their storage spot.</p>
+        </div>
+    </div>
+
+    <script>
+        // Get the modal
+        let modal = document.getElementById("instructions");
+        
+        // Get the button that opens the modal
+        let btn = document.getElementById("instructions_button");
+        
+        // Get the <span> element that closes the modal
+        let span = document.getElementsByClassName("instructions_close")[0];
+        
+        // When the user clicks the button, open the modal 
+        btn.onclick = function() {
+            modal.style.display = "block";
+        }
+        
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+        
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function(event) {
+            if (event.target == modal) {
+            modal.style.display = "none";
+            }
+        }
+    </script>
 
     <section id="config">
     </section>
 
     <section id="game">
-        <img src="https://lh3.googleusercontent.com/proxy/QYDKu1XXibKNqIY7oAaXGjKygSFHPB-xQSfZGS5LvXqZcUWXX3LdYbJ5NX7BIfR5Oe8DWNL1M11Atzp-hMax-87lq9BvViXPVmFjE3k9fGxuZxYvdL0vNWRf4Sf1OGkDgefWjLnmx3lduU21wJ7f" alt="">
+        <board>
+            <row id="topRow">
+                <img class="house" src="house.png" alt="" width="100em" height="auto">
+            </row>
+            <row id="bottomRow">
+                <img class="house" src="house.png" alt="" width="100em" height="auto">
+            </row>
+        </board>
     </section>
 
     <section id="instructions">
