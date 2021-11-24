@@ -21,7 +21,7 @@
     <div id="instructions" class="instructions_modal">
         <div class="instructions_content">
             <span class="instructions_close">&times;</span>
-            <p class = "inst_title">Instructions</p>
+            <p class = "title">Instructions</p>
             <p class = "second_title">Board:</p>
             <p class = "content">The board is comprised by a series of cavities, to be personalized by the user, and two storage spots on either side.</p>
             <p class = "content">Each user controls the side of the board they're facing and the warehouse to their right.</p>
@@ -34,7 +34,7 @@
                 but if you happen to pass through the other player's storage, you are to skip ahead, not placing any seeds there.
             </p>
             <p class = "content">If the last seed spot is your own storage space, you have another turn.</p>
-            <p class = "content">If the last seed spot is one of your own and is empty, then you have the opporunity to increase the number of seeds
+            <p class = "content">If the last seed spot is one of your own and is empty, then you have the opportunity to increase the number of seeds
                 in your storage spot. You can collect that last seed and the seeds on the cavity opposite to the one you landed, on your opponent's side.
             </p>
             <p class = "second_title">Ending & Winning Conditions:</p>
@@ -44,20 +44,38 @@
             <p class = "content">The winner is determined by whoever has the most seeds in their storage spot.</p>
         </div>
     </div>
-    
-    <section id="config">
-        <h1>Game Configuration</h1>
-        <h3>Current settings are the default and you can simply click on 'Start Game' in order to start playing.</h3>
-        <div>
-            Number of houses per player: <input id="houses_number" type="number" value="5" min="3" max="7" step="1">
-        </div>
-    </section>
 
     <div id="configurations" class="config_modal">
         <div class="config_content">
-            <span class="config_close"&times;></span>
+            <p class = "title">Game Configuration</p>
+            <p class = "second_title">Current settings are the default and you can simply click on 'Start Game' in order to start playing.</p>
+            <table class="config_table">
+                <tr class="config_row">
+                    <td class="config_cell"> Number of houses per player </td>
+                    <td class="config_cell"><input class="config_number_select" id="houses_number" type="number" value="5" min="3" max="7" step="1"></td>
+                </tr>
+                <tr class="config_row">
+                    <td class="config_cell"> Number of starting seeds per house </td>
+                    <td class="config_cell"><input class="config_number_select" id="seeds_number" type="number" value="8" min="4" max="16" step="1"></td>
+                </tr>
+            </table>
+            <!--
+            <p class = "second_title">Number of houses per player:
+                <input class="config_number_select" id="houses_number" type="number" value="5" min="3" max="7" step="1">
+            </p>
+            <p class = "second_title">Number of starting seeds per house:
+                <input class="config_number_select" id="seeds_number" type="number" value="8" min="4" max="16" step="1">
+            </p>
+            -->
+            <span class="config_close">Start Game</span>
         </div>
     </div>
+    
+    <section id="config">
+        
+    </section>
+
+    
 
     <section id="game">
         <board>
@@ -83,20 +101,20 @@
 
     <section id="leaderboard">
         <table id="classification">
-            <tr>
-                <th> User </th>
-                <th> Time </th>
-                <th> Classification </th>
+            <tr class="class_row">
+                <th class="class_head"> User </th>
+                <th class="class_head"> Time </th>
+                <th class="class_head"> Classification </th>
             </tr>
-            <tr>
-                <td> Admin </td>
-                <td> 09:39 </td>
-                <td> 15 </td>
+            <tr class="class_row">
+                <td class="class_cell"> Admin </td>
+                <td class="class_cell"> 09:39 </td>
+                <td class="class_cell"> 15 </td>
             </tr>
-            <tr>
-                <td> Admin </td>
-                <td> 09:43 </td>
-                <td> 10 </td>
+            <tr class="class_row">
+                <td class="class_cell"> Admin </td>
+                <td class="class_cell"> 09:43 </td>
+                <td class="class_cell"> 10 </td>
             </tr>
         </table>
     </section>
