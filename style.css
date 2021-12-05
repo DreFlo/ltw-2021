@@ -87,12 +87,12 @@ section {
     cursor: pointer;
 }
 
-.inst_title {
+.title {
     font-size: xx-large;
     font-weight: bold;
 }
 
-.inst_title::first-letter {
+.title::first-letter {
     font-size: 120%;
 }
 
@@ -122,7 +122,7 @@ section {
 }
 */
 
-th, td {
+.class_cell, .class_row {
     border: 1px solid black;
     border-collapse: collapse;
     padding: 10px;
@@ -133,7 +133,7 @@ th, td {
     border-collapse: collapse;
 }
 
-tr:hover {
+.class_row:hover {
     background-color: lightgray;
 }
 
@@ -209,11 +209,60 @@ storehouse {
     animation-duration: 4s;*/
 }
 
-h1{
-    font-size: 300%;
-    
+/* The Modal (background) */
+.config_modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+  
+  /* Modal Content */
+.config_content {
+    background-color: lightgray;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    border-radius: 8px;
+    width: 80%;
+    text-align: justify;
+}
+  
+  /* The Close Button */
+.config_close {
+    color: darkgrey;
+    font-size: 50px;
+    font-weight: bold;
+    margin-top: -1%;
 }
 
-h1::first-letter, h2::first-letter{
-    font-size: 120%;
+.config_close:hover, .config_close:focus {
+    color: rgb(77, 77, 77);
+    text-decoration: none;
+    cursor: pointer;
 }
+
+.config_table {
+    font-size: large;
+}
+
+.config_number_select{
+    margin-left: 1%;
+    font-size: large;
+    width: 100%;
+    text-align: left;
+    border: 1px solid black;
+}
+
+.config_cell:nth-child(1) {
+    background-color: white;
+    border: 1px solid black;
+}
+

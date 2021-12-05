@@ -24,10 +24,16 @@ window.onclick = function(event) {
     }
 }
 
-// Configurations
+/* Configurations */
 
+//Modal
+let config_modal = document.getElementById("configurations");
+let config_span = document.getElementsByClassName("config_close")[0];
+config_span.onclick = function() {
+    config_modal.style.display = "none";
+}
 window.onload = function() {
-    
+    config_modal.style.display = "block";
 }
 
 // ENUM
