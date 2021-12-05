@@ -1,0 +1,5 @@
+/CMakeLists.txt
+/.vs
+/.vscode
+/cmake-build-debug
+/.idea
