@@ -70,6 +70,7 @@ class House {
             console.log("No seeds in that house!");
             return true;
         }
+        console.log("Starting seed with: " + this.seedNumber.toString());
         this.added -= this.seedNumber;
         let temp = this.seedNumber;
         this.seedNumber = 0;
@@ -77,12 +78,15 @@ class House {
     }
 
     seed(seeds, ogRow) {
+        console.log("Seeded one, " + (seeds - 1).toString() + " remaining, now have: " + (this.seedNumber + 1).toString() + ".");
         this.seedNumber++;
         this.changed(1);
         if (seeds === 1) {
             if (this.row === ogRow && this.seedNumber === 1) {
+                console.log("Entered special rule taking from oposite house.")
                 this.row.storehouse.addSeeds(this.row.getOppositeHouse(this).removeSeeds() + 1);
                 this.seedNumber = 0;
+                this.changed(-1);
             }
             return false;
         }
@@ -93,11 +97,14 @@ class House {
 
     addSeeds(seeds) {
         this.seedNumber += seeds;
+        this.changed(seeds);
     }
 
     removeSeeds() {
+        console.log("Taking " + this.seedNumber.toString() + " from this house.")
         let temp = this.seedNumber;
         this.seedNumber = 0;
+        this.changed(-temp);
         return temp;
     }
 
@@ -127,13 +134,14 @@ class Storehouse extends House {
 
     seed(seeds, ogRow) {
         if (this.row === ogRow) {
+            console.log("Seeded one, " + (seeds - 1).toString() + " remaining.");
             this.seedNumber++;
             this.changed(1);
             if (seeds === 1) {
                 return true;
             }
             else {
-                return this.next.seed(seeds, ogRow);
+                return this.next.seed(--seeds, ogRow);
             }
         }
         else {
