@@ -53,7 +53,9 @@ const RAND_AI = 1;
 const BEST_MOVE_AI = 2;
 
 function getRandomInt(max) {
-    return Math.floor(Math.random() * max);
+    let temp = Math.floor(Math.random() * max);
+    console.log("Generated " + temp.toString());
+    return temp;
 }
 
 class House {
@@ -134,7 +136,7 @@ class Storehouse extends House {
 
     seed(seeds, ogRow) {
         if (this.row === ogRow) {
-            console.log("Seeded one, " + (seeds - 1).toString() + " remaining.");
+            console.log("Seeded one, " + (seeds - 1).toString() + " remaining, now have: " + (this.seedNumber + 1).toString() + ".");
             this.seedNumber++;
             this.changed(1);
             if (seeds === 1) {
@@ -257,21 +259,38 @@ let playNext = null;
 
 function setPlay() {
     for(let i = 0; i < game.houseNumber; i++) {
-        game.adversaryRow.houses[i].container.onclick = function(){
-            if (!player) {
-                playNext = game.adversaryRow.startSeedAt(i + 1);
-                if (!playNext) {
-                    player = true;
+        if (game.mode === PVP) {
+            game.adversaryRow.houses[i].container.onclick = function(){
+                if (!player) {
+                    playNext = game.adversaryRow.startSeedAt(i + 1);
+                    if (!playNext) {
+                        player = true;
+                    }
+                    updateBoard();
+                    if(game.adversaryRow.empty() || game.playerRow.empty()) checkWinner();
                 }
-                updateBoard();
-                if(game.adversaryRow.empty() || game.playerRow.empty()) checkWinner();
-            }
-        };
+            };
+        }
         game.playerRow.houses[i].container.onclick = function(){
             if (player) {
                 playNext = game.playerRow.startSeedAt(i + 1);
                 if (!playNext) {
                     player = false;
+                }
+                updateBoard();
+                if(game.adversaryRow.empty() || game.playerRow.empty()) checkWinner();
+            }
+            else {
+                if (game.mode === RAND_AI) {
+                    house = getRandomInt(game.houseNumber) + 1;
+                    console.log("Random move AI playing: " + house.toString());
+                } else if (game.mode === BEST_MOVE_AI) {
+                    house = game.bestPossibleMove() + 1;
+                    console.log("Best move AI playing: " + house.toString());
+                }
+                playNext = game.adversaryRow.startSeedAt(house);
+                if (!playNext) {
+                    player = true;
                 }
                 updateBoard();
                 if(game.adversaryRow.empty() || game.playerRow.empty()) checkWinner();
