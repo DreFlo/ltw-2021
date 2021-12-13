@@ -62,6 +62,7 @@ class House {
         this.row = row;
         this.next = null;
         this.container = null;
+        this.added = 0;
     }
 
     startSeed() {
@@ -69,6 +70,7 @@ class House {
             console.log("No seeds in that house!");
             return true;
         }
+        this.added -= this.seedNumber;
         let temp = this.seedNumber;
         this.seedNumber = 0;
         return this.next.seed(temp, this.row)
@@ -76,6 +78,7 @@ class House {
 
     seed(seeds, ogRow) {
         this.seedNumber++;
+        this.changed(1);
         if (seeds === 1) {
             if (this.row === ogRow && this.seedNumber === 1) {
                 this.row.storehouse.addSeeds(this.row.getOppositeHouse(this).removeSeeds() + 1);
@@ -101,11 +104,21 @@ class House {
     setContainer(container) {
         this.container = container;
     }
+
+    changed(seeds) {
+        if(this.added == 0) this.added = seeds;
+        else this.added += seeds;
+    }
+
+    resetAdded() {
+        this.added = 0;
+    }
 }
 
 class Storehouse extends House {
     constructor(row) {
         super(0, row);
+        this.added = 0;
     }
 
     startSeed() {
@@ -115,6 +128,7 @@ class Storehouse extends House {
     seed(seeds, ogRow) {
         if (this.row === ogRow) {
             this.seedNumber++;
+            this.changed(1);
             if (seeds === 1) {
                 return true;
             }
@@ -232,8 +246,6 @@ class Game {
             if (this.adversaryRow.houses[i].container === container) return this.adversaryRow.houses[i];
         }
     }
-
-
 }
 
 let rightStorehouse = document.getElementById("rightStorehouse");
@@ -344,27 +356,39 @@ function checkWinner() {
 }
 
 function updateHouseSeeds(house, seeds) {
-    while(house.firstChild) {
-        house.removeChild(house.firstChild);
+    if(seeds < 0){
+        while(seeds < 0){
+            house.removeChild(house.firstChild);
+            seeds++;
+        }
     }
-
-    for(let i = 0; i < seeds; i++) {
-        let seed = document.createElement("seed");
-
-        seed.style.top = (getRandomInt(50) + 10).toString() + "%";
-        seed.style.left = (getRandomInt(50) + 10).toString() + "%";
-
-        house.appendChild(seed);
+    else{
+        for(let i = 0; i < seeds; i++) {
+            let seed = document.createElement("seed");
+    
+            seed.style.top = (getRandomInt(50) + 10).toString() + "%";
+            seed.style.left = (getRandomInt(50) + 10).toString() + "%";
+    
+            house.appendChild(seed);
+        }
     }
+    
 }
+
 
 function updateBoard() {
     for(let i = 0; i < game.houseNumber; i++) {
-        updateHouseSeeds(game.adversaryRow.houses[i].container, game.adversaryRow.houses[i].seedNumber);
-        updateHouseSeeds(game.playerRow.houses[i].container, game.playerRow.houses[i].seedNumber);
+        updateHouseSeeds(game.adversaryRow.houses[i].container, game.adversaryRow.houses[i].added);
+        game.adversaryRow.houses[i].resetAdded();
+
+        updateHouseSeeds(game.playerRow.houses[i].container, game.playerRow.houses[i].added);
+        game.playerRow.houses[i].resetAdded();
     }
-    updateHouseSeeds(game.adversaryRow.storehouse.container, game.adversaryRow.storehouse.seedNumber);
-    updateHouseSeeds(game.playerRow.storehouse.container, game.playerRow.storehouse.seedNumber);
+    updateHouseSeeds(game.adversaryRow.storehouse.container, game.adversaryRow.storehouse.added);
+    game.adversaryRow.storehouse.resetAdded();
+
+    updateHouseSeeds(game.playerRow.storehouse.container, game.playerRow.storehouse.added);
+    game.playerRow.storehouse.resetAdded();
 }
 
 function setBoard(houses, seeds) {
