@@ -200,13 +200,6 @@ class Row {
         }
         return total;
     }
-
-    searchHouseByContainer(container) {
-        for(let i = 0; i < this.houseNumber; i++) {
-            if (this.houses[i].container === container) return this.houses[i];
-        }
-        return undefined;
-    }
 }
 
 class Game {
@@ -240,21 +233,7 @@ class Game {
 
         return res;
     }
-
-    searchHouseByContainer(container) {
-        for(let i = 0; i < this.houseNumber; i++) {
-            if (this.adversaryRow.houses[i].container === container) return this.adversaryRow.houses[i];
-        }
-    }
 }
-
-let rightStorehouse = document.getElementById("rightStorehouse");
-
-let leftStorehouse = document.getElementById("leftStorehouse");
-
-let topRow = document.getElementById("topRow");
-
-let bottomRow = document.getElementById("bottomRow");
 
 let houseNumberChooser = document.getElementById("houses_number");
 
@@ -274,7 +253,9 @@ function setPlay() {
             if (!player) {
                 playNext = game.adversaryRow.startSeedAt(i + 1);
                 updateBoard();
-                if (!playNext) player = true;
+                if (!playNext) {
+                    player = true;
+                }
                 if(game.adversaryRow.empty() || game.playerRow.empty()) checkWinner();
             }
         };
@@ -282,7 +263,9 @@ function setPlay() {
             if (player) {
                 playNext = game.playerRow.startSeedAt(i + 1);
                 updateBoard();
-                if (!playNext) player = false;
+                if (!playNext) {
+                    player = false;
+                }
                 if(game.adversaryRow.empty() || game.playerRow.empty()) checkWinner();
             }
         };
@@ -355,7 +338,12 @@ function checkWinner() {
     }
 }
 
-function updateHouseSeeds(house, seeds) {
+function updateHouseSeeds(house, seeds, setHover) {
+    if(setHover) {
+        house.classList.add('playable_house');
+    } else if (house.classList.contains('playable_house')) {
+        house.classList.remove('playable_house');
+    }
     if(seeds < 0){
         while(seeds < 0){
             house.removeChild(house.firstChild);
@@ -375,13 +363,12 @@ function updateHouseSeeds(house, seeds) {
     
 }
 
-
 function updateBoard() {
     for(let i = 0; i < game.houseNumber; i++) {
-        updateHouseSeeds(game.adversaryRow.houses[i].container, game.adversaryRow.houses[i].added);
+        updateHouseSeeds(game.adversaryRow.houses[i].container, game.adversaryRow.houses[i].added, player);
         game.adversaryRow.houses[i].resetAdded();
 
-        updateHouseSeeds(game.playerRow.houses[i].container, game.playerRow.houses[i].added);
+        updateHouseSeeds(game.playerRow.houses[i].container, game.playerRow.houses[i].added, !player);
         game.playerRow.houses[i].resetAdded();
     }
     updateHouseSeeds(game.adversaryRow.storehouse.container, game.adversaryRow.storehouse.added);
@@ -394,6 +381,10 @@ function updateBoard() {
 function setBoard(houses, seeds) {
     game = new Game(houses, seeds, PVP);
 
+    let topRow = document.getElementById("topRow");
+
+    let bottomRow = document.getElementById("bottomRow");
+
     while(topRow.firstChild) {
         topRow.removeChild(topRow.firstChild);
     }
@@ -405,8 +396,8 @@ function setBoard(houses, seeds) {
     topRow.style.gridTemplateColumns = "1fr ".repeat(houses);
     bottomRow.style.gridTemplateColumns = "1fr ".repeat(houses);
 
-    game.adversaryRow.storehouse.container = leftStorehouse;
-    game.playerRow.storehouse.container = rightStorehouse;
+    game.adversaryRow.storehouse.container = document.getElementById("leftStorehouse");
+    game.playerRow.storehouse.container = document.getElementById("rightStorehouse");
 
     for(let i = 0; i < houses; i++) {
         let topHouse = document.createElement("house");

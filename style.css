@@ -279,3 +279,7 @@ storehouse {
 .class_row:hover {
     background-color: lightgray;
 }
+
+.playable_house:hover {
+    background-color: blueviolet;
+}
