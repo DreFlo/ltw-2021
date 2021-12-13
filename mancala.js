@@ -127,7 +127,6 @@ class House {
 class Storehouse extends House {
     constructor(row) {
         super(0, row);
-        this.added = 0;
     }
 
     startSeed() {
@@ -169,11 +168,13 @@ class Row {
             this.houses[i].next = this.houses[i + 1];
         }
 
+        console.log("Row length " + this.houses.length.toString());
+
         this.houses[(this.houses.length - 1)].next = this.storehouse;
     }
 
     startSeedAt(houseNumber) {
-        return this.houses[houseNumber - 1].startSeed();
+        return this.houses[this.houseNumber - 1].startSeed();
     }
 
     setNextRow(row) {
@@ -210,6 +211,27 @@ class Row {
         }
         return total;
     }
+
+    copy() {
+        console.log("Arrived here!");
+        let res = new Row(this.houseNumber, this.seedNumber);
+
+        for(let i = 0; i < res.houseNumber; i++) {
+            res.houses[i].seedNumber = this.houses[i].seedNumber;
+            res.houses[i].added = this.houses[i].added;
+        }
+
+        res.storehouse.seedNumber = this.storehouse.seedNumber;
+        res.storehouse.added = this.storehouse.added;
+
+        for(let i = 0; i < res.houseNumber - 1; i++) {
+            res.houses[i].next = res.houses[i + 1];
+        }
+
+        res.houses[res.houseNumber - 1].next = res.storehouse;
+
+        return res;
+    }
 }
 
 class Game {
@@ -230,16 +252,30 @@ class Game {
         let res = 0;
 
         for (let i = 1; i < this.houseNumber + 1; i++) {
-            let gameClone = JSON.parse(JSON.stringify(this));
+            let gameClone = this.copy();
 
             gameClone.adversaryRow.startSeedAt(i);
 
             bestMoves.push(gameClone.adversaryRow.storehouse.seedNumber);
+
+            console.log("Possible move: " + gameClone.adversaryRow.storehouse.seedNumber);
         }
 
         for (let i = 1; i < this.houseNumber; i++) {
             if (bestMoves[res] < bestMoves[i]) res = i;
         }
+
+        return res;
+    }
+
+    copy() {
+        let res = new Game(this.houseNumber, this.seedNumber, this.mode);
+
+        res.adversaryRow = this.adversaryRow.copy();
+        res.playerRow = this.playerRow.copy();
+
+        res.adversaryRow.setNextRow(res.playerRow);
+        res.playerRow.setNextRow(res.adversaryRow);
 
         return res;
     }
