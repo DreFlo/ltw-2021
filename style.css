@@ -109,33 +109,12 @@ section {
     margin-left: 1%;
 }
 
-#leaderboard {
-    display: flex;
-    justify-content: center;
-    background-color: whitesmoke;
-}
-
 /*
 @keyframes example {
     from {background-color: blue;}
     to {background-color: aqua;}
 }
 */
-
-.class_cell, .class_row {
-    border: 1px solid black;
-    border-collapse: collapse;
-    padding: 10px;
-}
-
-#classification {
-    align-self: center;
-    border-collapse: collapse;
-}
-
-.class_row:hover {
-    background-color: lightgray;
-}
 
 board {
     position: absolute;
@@ -212,7 +191,9 @@ storehouse {
     right : 3%;
 }
 
+
 /* Configurations */
+
 #config {
     background-color: rgb(184, 184, 184);
     /*animation-name: example;
@@ -276,3 +257,25 @@ storehouse {
     border: 1px solid black;
 }
 
+/* Leaderboard */
+
+#leaderboard {
+    display: flex;
+    justify-content: center;
+    background-color: whitesmoke;
+}
+
+#classification {
+    align-self: center;
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+.class_cell, .class_row, .class_head {
+    border: 1px solid black;
+    padding: 10px;
+}
+
+.class_row:hover {
+    background-color: lightgray;
+}

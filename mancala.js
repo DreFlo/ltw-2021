@@ -38,6 +38,15 @@ window.onload = function() {
     config_modal.style.display = "block";
 }
 
+
+/*var tds = document.querySelector(".classification td");
+
+for(let i = 0; i < tds.length(); i++){
+    tds[i].classList.add(tds[i].innerText);
+}*/
+
+/* Game Logic */
+
 // ENUM
 const PVP = 0;
 const RAND_AI = 1;
@@ -321,10 +330,12 @@ function checkWinner() {
     if (game.playerRow.getTotal() > game.adversaryRow.getTotal()) {
         // Player ganha - do smth
         console.log("Player wins!");
+        updateLeaderboard("Player", game.playerRow.getTotal());
     }
     else if (game.playerRow.getTotal() < game.adversaryRow.getTotal()) {
         // Adversary ganha - do smth
         console.log("Adversary wins!");
+        updateLeaderboard("Adversary", game.adversaryRow.getTotal());
     }
     else {
         // Tie
@@ -399,3 +410,28 @@ seedNumberChooser.onchange = function() {
 };
 
 setBoard(houseNumberChooser.value, seedNumberChooser.value);
+
+/* Leaderboard */
+
+let class_table = document.getElementById("classification");
+
+function updateLeaderboard(winner, score) {
+    let class_row = class_table.insertRow();
+    class_row.classList.add("class_row");
+
+    let class_row_user = class_row.insertCell(0);
+    class_row_user.classList.add("class_cell");
+    
+    let class_row_time = class_row.insertCell(1);
+    class_row_time.classList.add("class_cell");
+
+    let class_row_score = class_row.insertCell(2);
+    class_row_score.classList.add("class_cell");
+
+    class_row_user.innerHTML = winner;
+
+    let today = new Date();
+    class_row_time.innerHTML = today.getHours() + ":" + today.getMinutes();
+
+    class_row_score.innerHTML = score;
+}
