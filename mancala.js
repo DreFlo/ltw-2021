@@ -398,6 +398,4 @@ seedNumberChooser.onchange = function() {
     setBoard(houseNumberChooser.value, seedNumberChooser.value);
 };
 
-houseNumberChooser.onload = function() {
-    setBoard(houseNumberChooser.value, seedNumberChooser.value);
-};
+setBoard(houseNumberChooser.value, seedNumberChooser.value);
