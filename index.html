@@ -56,7 +56,7 @@
                 </tr>
                 <tr class="config_row">
                     <td class="config_cell"> Number of starting seeds per house </td>
-                    <td class="config_cell"><input class="config_number_select" id="seeds_number" type="number" value="8" min="4" max="16" step="1"></td>
+                    <td class="config_cell"><input class="config_number_select" id="seeds_number" type="number" value="8" min="4" max="10" step="1"></td>
                 </tr>
             </table>
             <!--
@@ -80,18 +80,12 @@
     <section id="game">
         <board id="board_0">
             <storehouse id="leftStorehouse">
-
             </storehouse>
-            <row id="topRow">
-                <house>
-                    <seed></seed>
-                </house>
-            </row>
-            <row id="bottomRow">
-                <house></house>
-            </row>
+            <div id="topRow">
+            </div>
+            <div id="bottomRow">
+            </div>
             <storehouse id="rightStorehouse">
-
             </storehouse>            
         </board>
     </section>

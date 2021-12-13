@@ -28,7 +28,9 @@ window.onclick = function(event) {
 
 //Modal
 let config_modal = document.getElementById("configurations");
+
 let config_span = document.getElementsByClassName("config_close")[0];
+
 config_span.onclick = function() {
     config_modal.style.display = "none";
 }
@@ -50,6 +52,7 @@ class House {
         this.seedNumber = seedNumber;
         this.row = row;
         this.next = null;
+        this.container = null;
     }
 
     startSeed() {
@@ -59,19 +62,21 @@ class House {
         }
         let temp = this.seedNumber;
         this.seedNumber = 0;
-        return this.next.seed(temp, row)
+        return this.next.seed(temp, this.row)
     }
 
     seed(seeds, ogRow) {
         this.seedNumber++;
-        if (this.seedNumber === 1) {
+        if (seeds === 1) {
             if (this.row === ogRow && this.seedNumber === 1) {
                 this.row.storehouse.addSeeds(this.row.getOppositeHouse(this).removeSeeds() + 1);
                 this.seedNumber = 0;
             }
             return false;
         }
-        else return this.next.seed(--seeds, ogRow);
+        else {
+            return this.next.seed(--seeds, ogRow);
+        }
     }
 
     addSeeds(seeds) {
@@ -82,6 +87,10 @@ class House {
         let temp = this.seedNumber;
         this.seedNumber = 0;
         return temp;
+    }
+
+    setContainer(container) {
+        this.container = container;
     }
 }
 
@@ -100,9 +109,13 @@ class Storehouse extends House {
             if (seeds === 1) {
                 return true;
             }
-            else return this.next.seed(seeds, ogRow);
+            else {
+                return this.next.seed(seeds, ogRow);
+            }
         }
-        else return this.next.seed(seeds, ogRow);
+        else {
+            return this.next.seed(seeds, ogRow);
+        }
     }
 }
 
@@ -123,7 +136,7 @@ class Row {
             this.houses[i].next = this.houses[i + 1];
         }
 
-        this.house[this.houseNumber - 1].next = this.storehouse;
+        this.houses[(this.houses.length - 1)].next = this.storehouse;
     }
 
     startSeedAt(houseNumber) {
@@ -160,9 +173,16 @@ class Row {
     getTotal() {
         let total = this.storehouse.seedNumber;
         for (let i = 0; i < this.houseNumber; i++) {
-            total += houses[i].seedNumber;
+            total += this.houses[i].seedNumber;
         }
         return total;
+    }
+
+    searchHouseByContainer(container) {
+        for(let i = 0; i < this.houseNumber; i++) {
+            if (this.houses[i].container === container) return this.houses[i];
+        }
+        return undefined;
     }
 }
 
@@ -173,62 +193,10 @@ class Game {
         this.mode = mode;
 
         this.adversaryRow = new Row(this.houseNumber, this.seedNumber);
-        this.playerRow = new Row(this.house, this.seedNumber);
+        this.playerRow = new Row(this.houseNumber, this.seedNumber);
 
         this.adversaryRow.setNextRow(this.playerRow);
         this.playerRow.setNextRow(this.adversaryRow);
-    }
-
-    play() {
-        let player = true;
-        let house = 0;
-        while(!this.adversaryRow.empty() && !this.adversaryRow.empty()) {
-            // Probs update a imagem do tabuleiro
-            
-            if (player) {
-                // Gotta play here
-                // Input da house
-
-                if (this.playerRow.startSeedAt(house)) continue;
-            }
-
-            else {
-                switch(this.mode)
-                {
-                    case PVP:
-                        // Gotta play here
-                        // Input da house
-
-                        break;
-                    case RAND_AI:
-                        house = getRandomInt(this.houseNumber - 1) + 1;
-
-                        break;
-                    case BEST_MOVE_AI:
-                        house = this.bestPossibleMove() + 1;
-
-                        break;
-                    default:
-                        console.error("No valid mode for game");
-                        return;
-                }
-                if (this.adversaryRow.startSeedAt(house)) continue;
-            }
-
-            player = !player;
-        }
-        if (this.playerRow.getTotal() > this.adversaryRow.getTotal()) {
-            // Player ganha - do smth
-            console.log("Player wins!");
-        }
-        else if (this.playerRow.getTotal() < this.adversaryRow.getTotal()) {
-            // Adversary ganha - do smth
-            console.log("Adversary wins!");
-        }
-        else {
-            // Tie
-            console.log("Tie!");
-        }
     }
 
     bestPossibleMove() {
@@ -249,4 +217,187 @@ class Game {
 
         return res;
     }
+
+    searchHouseByContainer(container) {
+        for(let i = 0; i < this.houseNumber; i++) {
+            if (this.adversaryRow.houses[i].container === container) return this.adversaryRow.houses[i];
+        }
+    }
+
+
 }
+
+let rightStorehouse = document.getElementById("rightStorehouse");
+
+let leftStorehouse = document.getElementById("leftStorehouse");
+
+let topRow = document.getElementById("topRow");
+
+let bottomRow = document.getElementById("bottomRow");
+
+let houseNumberChooser = document.getElementById("houses_number");
+
+let seedNumberChooser = document.getElementById("seeds_number");
+
+let game = undefined;
+
+let player = true;
+
+let house = 0;
+
+let playNext = null;
+
+function setPlay() {
+    for(let i = 0; i < game.houseNumber; i++) {
+        game.adversaryRow.houses[i].container.onclick = function(){
+            if (!player) {
+                playNext = game.adversaryRow.startSeedAt(i + 1);
+                updateBoard();
+                if (!playNext) player = true;
+                if(game.adversaryRow.empty() || game.playerRow.empty()) checkWinner();
+            }
+        };
+        game.playerRow.houses[i].container.onclick = function(){
+            if (player) {
+                playNext = game.playerRow.startSeedAt(i + 1);
+                updateBoard();
+                if (!playNext) player = false;
+                if(game.adversaryRow.empty() || game.playerRow.empty()) checkWinner();
+            }
+        };
+    }
+    /*
+    while(!this.adversaryRow.empty() && !this.adversaryRow.empty()) {
+        // Probs update a imagem do tabuleiro
+        if (player) {
+            if (playNext === null || playNext === true) continue;
+            if (playNext === false) {
+                player = !player;
+                playNext = null;
+            }
+        }
+
+        else {
+            switch(this.mode)
+            {
+                case PVP:  
+                    if (playNext === null || playNext === true) continue;
+                    if (playNext === false) {
+                        player = !player;
+                        playNext = null;
+                    }
+
+                    break;
+                case RAND_AI:
+                    house = getRandomInt(this.houseNumber - 1) + 1;
+                    if (this.adversaryRow.startSeedAt(house)) continue;
+                    else {
+                        player = !player;
+                        playNext = null;
+                    }
+                    break;
+                case BEST_MOVE_AI:
+                    house = this.bestPossibleMove() + 1;
+                    if (this.adversaryRow.startSeedAt(house)) continue;
+                    else {
+                        player = !player;
+                        playNext = null;
+                    }
+                    break;
+                default:
+                    console.error("No valid mode for game");
+                    return;
+            }
+        }
+    }*/
+}
+
+function checkWinner() {
+    for(let i = 0; i < game.houseNumber; i++) {
+        game.playerRow.houses[i].container.onclick = function(){};
+        game.adversaryRow.houses[i].container.onclick = function(){};
+    }
+
+    if (game.playerRow.getTotal() > game.adversaryRow.getTotal()) {
+        // Player ganha - do smth
+        console.log("Player wins!");
+    }
+    else if (game.playerRow.getTotal() < game.adversaryRow.getTotal()) {
+        // Adversary ganha - do smth
+        console.log("Adversary wins!");
+    }
+    else {
+        // Tie
+        console.log("Tie!");
+    }
+}
+
+function updateHouseSeeds(house, seeds) {
+    while(house.firstChild) {
+        house.removeChild(house.firstChild);
+    }
+
+    for(let i = 0; i < seeds; i++) {
+        let seed = document.createElement("seed");
+
+        seed.style.top = (getRandomInt(50) + 10).toString() + "%";
+        seed.style.left = (getRandomInt(50) + 10).toString() + "%";
+
+        house.appendChild(seed);
+    }
+}
+
+function updateBoard() {
+    for(let i = 0; i < game.houseNumber; i++) {
+        updateHouseSeeds(game.adversaryRow.houses[i].container, game.adversaryRow.houses[i].seedNumber);
+        updateHouseSeeds(game.playerRow.houses[i].container, game.playerRow.houses[i].seedNumber);
+    }
+    updateHouseSeeds(game.adversaryRow.storehouse.container, game.adversaryRow.storehouse.seedNumber);
+    updateHouseSeeds(game.playerRow.storehouse.container, game.playerRow.storehouse.seedNumber);
+}
+
+function setBoard(houses, seeds) {
+    game = new Game(houses, seeds, PVP);
+
+    while(topRow.firstChild) {
+        topRow.removeChild(topRow.firstChild);
+    }
+
+    while(bottomRow.firstChild) {
+        bottomRow.removeChild(bottomRow.firstChild);
+    }
+
+    topRow.style.gridTemplateColumns = "1fr ".repeat(houses);
+    bottomRow.style.gridTemplateColumns = "1fr ".repeat(houses);
+
+    game.adversaryRow.storehouse.container = leftStorehouse;
+    game.playerRow.storehouse.container = rightStorehouse;
+
+    for(let i = 0; i < houses; i++) {
+        let topHouse = document.createElement("house");
+        let bottomHouse = document.createElement("house");
+
+        updateHouseSeeds(topHouse, seeds);
+        updateHouseSeeds(bottomHouse, seeds);
+
+        topRow.appendChild(topHouse);
+        bottomRow.appendChild(bottomHouse);
+
+        game.adversaryRow.houses[houses - 1 - i].container = topHouse;
+        game.playerRow.houses[i].container = bottomHouse;
+    }
+
+    setPlay();
+}
+
+houseNumberChooser.onchange = function() {
+    setBoard(houseNumberChooser.value, seedNumberChooser.value);
+};
+
+seedNumberChooser.onchange = function() {
+    setBoard(houseNumberChooser.value, seedNumberChooser.value);
+};
+
+houseNumberChooser.onload = function() {
+    setBoard(houseNumberChooser.value, seedNumberChooser.value);
+};
