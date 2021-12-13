@@ -260,20 +260,20 @@ function setPlay() {
         game.adversaryRow.houses[i].container.onclick = function(){
             if (!player) {
                 playNext = game.adversaryRow.startSeedAt(i + 1);
-                updateBoard();
                 if (!playNext) {
                     player = true;
                 }
+                updateBoard();
                 if(game.adversaryRow.empty() || game.playerRow.empty()) checkWinner();
             }
         };
         game.playerRow.houses[i].container.onclick = function(){
             if (player) {
                 playNext = game.playerRow.startSeedAt(i + 1);
-                updateBoard();
                 if (!playNext) {
                     player = false;
                 }
+                updateBoard();
                 if(game.adversaryRow.empty() || game.playerRow.empty()) checkWinner();
             }
         };
@@ -373,10 +373,10 @@ function updateHouseSeeds(house, seeds, setHover) {
 
 function updateBoard() {
     for(let i = 0; i < game.houseNumber; i++) {
-        updateHouseSeeds(game.adversaryRow.houses[i].container, game.adversaryRow.houses[i].added, player);
+        updateHouseSeeds(game.adversaryRow.houses[i].container, game.adversaryRow.houses[i].added, !player);
         game.adversaryRow.houses[i].resetAdded();
 
-        updateHouseSeeds(game.playerRow.houses[i].container, game.playerRow.houses[i].added, !player);
+        updateHouseSeeds(game.playerRow.houses[i].container, game.playerRow.houses[i].added, player);
         game.playerRow.houses[i].resetAdded();
     }
     updateHouseSeeds(game.adversaryRow.storehouse.container, game.adversaryRow.storehouse.added);
