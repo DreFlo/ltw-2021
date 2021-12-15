@@ -11,6 +11,7 @@
 
     <header>
         <ul>
+            <li><a href="#identification">Identification</a></li>
             <li><a href="#game">Game</a></li>
             <li><a href="#leaderboard">Leaderboard</a></li>
             <li> <button id="instructions_button"> Instructions </button></li>
@@ -66,11 +67,27 @@
                 <input class="config_number_select" id="seeds_number" type="number" value="8" min="4" max="16" step="1">
             </p>
             -->
-            <span class="config_close">Start Game</span>
+            <span class="config_close" id="start_game_button">Start Game</span>
         </div>
     </div>
+
+    <section id="identification">
+        <div class="login">
+            <div> <label for="uname"><b>Nickname</b></label> </div>
+            <div> <input type="text" placeholder="Enter Nickname" name="uname" required> </div>
+
+            <div> <label for="psw"><b>Password</b></label> </div>
+            <div> <input type="password" placeholder="Enter Password" name="psw" required> </div>
+
+            <div class="id_btns">
+                <button type="submit" class="login_btn">Login</button>
+                <button type="submit" class="anonymous_btn">Anonymous</button>
+            </div>
+        </div>
+    </section>
  
     <section id="game">
+        <logo>Mancala!</logo>
         <board id="board_0">
             <storehouse id="leftStorehouse">
             </storehouse>
@@ -84,6 +101,7 @@
     </section>
 
     <section id="leaderboard">
+        <logo>Mancala!</logo>
         <table id="classification">
             <tr class="class_row">
                 <th class="class_head"> User </th>

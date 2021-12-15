@@ -29,11 +29,6 @@ window.onclick = function(event) {
 //Modal
 let config_modal = document.getElementById("configurations");
 
-let config_span = document.getElementsByClassName("config_close")[0];
-
-config_span.onclick = function() {
-    config_modal.style.display = "none";
-}
 window.onload = function() {
     config_modal.style.display = "block";
 }
@@ -54,7 +49,7 @@ const BEST_MOVE_AI = 2;
 
 function getRandomInt(max) {
     let temp = Math.floor(Math.random() * max);
-    console.log("Generated " + temp.toString());
+    //console.log("Generated " + temp.toString());
     return temp;
 }
 
@@ -80,7 +75,7 @@ class House {
     }
 
     seed(seeds, ogRow) {
-        console.log("Seeded one, " + (seeds - 1).toString() + " remaining, now have: " + (this.seedNumber + 1).toString() + ".");
+        console.log("Seeded one, " + (seeds - 1).toString() + " remaining, now have: " + (this.seedNumber + 1) + ".");
         this.seedNumber++;
         this.changed(1);
         if (seeds === 1) {
@@ -168,13 +163,13 @@ class Row {
             this.houses[i].next = this.houses[i + 1];
         }
 
-        console.log("Row length " + this.houses.length.toString());
+        //console.log("Row length " + this.houses.length.toString());
 
         this.houses[(this.houses.length - 1)].next = this.storehouse;
     }
 
     startSeedAt(houseNumber) {
-        return this.houses[this.houseNumber - 1].startSeed();
+        return this.houses[houseNumber - 1].startSeed();
     }
 
     setNextRow(row) {
@@ -213,7 +208,6 @@ class Row {
     }
 
     copy() {
-        console.log("Arrived here!");
         let res = new Row(this.houseNumber, this.seedNumber);
 
         for(let i = 0; i < res.houseNumber; i++) {
@@ -249,22 +243,23 @@ class Game {
 
     bestPossibleMove() {
         let bestMoves = [];
-        let res = 0;
+        let res = 1;
 
-        for (let i = 1; i < this.houseNumber + 1; i++) {
+        for (let i = 1; i <= this.houseNumber; i++) {
             let gameClone = this.copy();
 
             gameClone.adversaryRow.startSeedAt(i);
 
             bestMoves.push(gameClone.adversaryRow.storehouse.seedNumber);
 
-            console.log("Possible move: " + gameClone.adversaryRow.storehouse.seedNumber);
+            console.log("Possible move: " + i.toString());
         }
 
-        for (let i = 1; i < this.houseNumber; i++) {
-            if (bestMoves[res] < bestMoves[i]) res = i;
+        for (let i = 2; i <= this.houseNumber; i++) {
+            if (bestMoves[res - 1] < bestMoves[i - 1]) res = i;
         }
 
+        console.log("Best move at: " + res.toString());
         return res;
     }
 
@@ -285,6 +280,8 @@ let houseNumberChooser = document.getElementById("houses_number");
 
 let seedNumberChooser = document.getElementById("seeds_number");
 
+let startGameButton = document.getElementById("start_game_button");
+
 let game = undefined;
 
 let player = true;
@@ -294,6 +291,7 @@ let house = 0;
 let playNext = null;
 
 function setPlay() {
+    showTurnMessage();
     for(let i = 0; i < game.houseNumber; i++) {
         if (game.mode === PVP) {
             game.adversaryRow.houses[i].container.onclick = function(){
@@ -303,6 +301,7 @@ function setPlay() {
                         player = true;
                     }
                     updateBoard();
+                    showTurnMessage();
                     if(game.adversaryRow.empty() || game.playerRow.empty()) checkWinner();
                 }
             };
@@ -314,14 +313,24 @@ function setPlay() {
                     player = false;
                 }
                 updateBoard();
+                showTurnMessage();
                 if(game.adversaryRow.empty() || game.playerRow.empty()) checkWinner();
             }
-            else {
+        };
+    }
+    if (game.mode !== PVP) {
+        let gameSection = document.getElementById("game");
+        let playAIButton = document.createElement("playAIButton");
+        gameSection.appendChild(playAIButton);
+        playAIButton.id = "playAIButton";
+        playAIButton.innerHTML = "Play AI";
+        playAIButton.onclick = function() {
+            if (!player) {
                 if (game.mode === RAND_AI) {
                     house = getRandomInt(game.houseNumber) + 1;
                     console.log("Random move AI playing: " + house.toString());
                 } else if (game.mode === BEST_MOVE_AI) {
-                    house = game.bestPossibleMove() + 1;
+                    house = game.bestPossibleMove();
                     console.log("Best move AI playing: " + house.toString());
                 }
                 playNext = game.adversaryRow.startSeedAt(house);
@@ -329,54 +338,11 @@ function setPlay() {
                     player = true;
                 }
                 updateBoard();
+                showTurnMessage();
                 if(game.adversaryRow.empty() || game.playerRow.empty()) checkWinner();
             }
-        };
+        }
     }
-    /*
-    while(!this.adversaryRow.empty() && !this.adversaryRow.empty()) {
-        // Probs update a imagem do tabuleiro
-        if (player) {
-            if (playNext === null || playNext === true) continue;
-            if (playNext === false) {
-                player = !player;
-                playNext = null;
-            }
-        }
-
-        else {
-            switch(this.mode)
-            {
-                case PVP:  
-                    if (playNext === null || playNext === true) continue;
-                    if (playNext === false) {
-                        player = !player;
-                        playNext = null;
-                    }
-
-                    break;
-                case RAND_AI:
-                    house = getRandomInt(this.houseNumber - 1) + 1;
-                    if (this.adversaryRow.startSeedAt(house)) continue;
-                    else {
-                        player = !player;
-                        playNext = null;
-                    }
-                    break;
-                case BEST_MOVE_AI:
-                    house = this.bestPossibleMove() + 1;
-                    if (this.adversaryRow.startSeedAt(house)) continue;
-                    else {
-                        player = !player;
-                        playNext = null;
-                    }
-                    break;
-                default:
-                    console.error("No valid mode for game");
-                    return;
-            }
-        }
-    }*/
 }
 
 function checkWinner() {
@@ -401,10 +367,22 @@ function checkWinner() {
     }
 }
 
+function showTurnMessage() {
+    let gameSection = document.getElementById("game");
+    let prevMessage;
+    if ((prevMessage = document.getElementById("tm")) !== null) {
+        prevMessage.remove();
+    }
+    let turnMessage = document.createElement("turnMessage");
+    turnMessage.innerHTML = player ? "Player!" : "Adversary!";
+    turnMessage.id = "tm"
+    gameSection.appendChild(turnMessage);
+}
+
 function updateHouseSeeds(house, seeds, setHover) {
     if(setHover) {
         house.classList.add('playable_house');
-    } else if (house.classList.contains('playable_house')) {
+    } else {
         house.classList.remove('playable_house');
     }
     if(seeds < 0){
@@ -428,7 +406,7 @@ function updateHouseSeeds(house, seeds, setHover) {
 
 function updateBoard() {
     for(let i = 0; i < game.houseNumber; i++) {
-        updateHouseSeeds(game.adversaryRow.houses[i].container, game.adversaryRow.houses[i].added, !player);
+        updateHouseSeeds(game.adversaryRow.houses[i].container, game.adversaryRow.houses[i].added, !player && game.mode === PVP);
         game.adversaryRow.houses[i].resetAdded();
 
         updateHouseSeeds(game.playerRow.houses[i].container, game.playerRow.houses[i].added, player);
@@ -439,10 +417,16 @@ function updateBoard() {
 
     updateHouseSeeds(game.playerRow.storehouse.container, game.playerRow.storehouse.added);
     game.playerRow.storehouse.resetAdded();
+
+    if(player && game.mode !== PVP) {
+        document.getElementById("playAIButton").classList.remove("playable_house");
+    } else if (!player && game.mode !== PVP) {
+        document.getElementById("playAIButton").classList.add("playable_house");
+    }
 }
 
 function setBoard(houses, seeds) {
-    game = new Game(houses, seeds, PVP);
+    game = new Game(houses, seeds, RAND_AI);
 
     let topRow = document.getElementById("topRow");
 
@@ -475,8 +459,6 @@ function setBoard(houses, seeds) {
         game.adversaryRow.houses[houses - 1 - i].container = topHouse;
         game.playerRow.houses[i].container = bottomHouse;
     }
-
-    setPlay();
 }
 
 houseNumberChooser.onchange = function() {
@@ -486,6 +468,11 @@ houseNumberChooser.onchange = function() {
 seedNumberChooser.onchange = function() {
     setBoard(houseNumberChooser.value, seedNumberChooser.value);
 };
+
+startGameButton.onclick = function () {
+    setPlay();
+    config_modal.style.display = "none";
+}
 
 setBoard(houseNumberChooser.value, seedNumberChooser.value);
 
