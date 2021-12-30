@@ -43,7 +43,10 @@ section {
 }
 
 #game {
-    background-color: aqua;
+    /*background-color: aqua;*/
+    background-color: #332013;
+    background-size: 32px 32px;
+    background-image: repeating-linear-gradient(45deg, #24160d 0, #24160d 1px, #332013 0, #332013 50%);
 }
 
 /* The Modal (background) */
@@ -123,8 +126,11 @@ board {
     width: 110vh;
     height: 50vh;
     border-radius: 50px;
-    background-color: chartreuse;
+    /*background-color: chartreuse;*/
     padding: 0;
+    background-color: #24160d;
+    background-size: 32px 32px;
+    background-image: repeating-linear-gradient(135deg, #180e09 0, #180e09 1px, #24160d 0, #24160d 50%);
 }
 
 house {  
@@ -132,8 +138,11 @@ house {
     width: 74%;
     height: 100%;
     border-radius: 30px;
-    background-color: green;
+    /*background-color: green;*/
     justify-self: center;
+    background-color: #a26f4d;
+    background-size: 32px 32px;
+    background-image: repeating-linear-gradient(90deg, #80583d 0, #80583d 1px, #a26f4d 0, #a26f4d 50%);
 }
 
 seed {
@@ -155,8 +164,11 @@ storehouse {
     bottom: 5%;
     width: 10%;
     height: 90%;
-    background-color: violet;
+    /*background-color: violet;*/
     border-radius: 30px;
+    background-color: #a26f4d;
+    background-size: 32px 32px;
+    background-image: repeating-linear-gradient(90deg, #80583d 0, #80583d 1px, #a26f4d 0, #a26f4d 50%);
 }
 
 #topRow {
@@ -262,22 +274,28 @@ storehouse {
 #leaderboard {
     display: flex;
     justify-content: center;
-    background-color: whitesmoke;
+    background-color: #332013;
+    background-size: 32px 32px;
+    background-image: repeating-linear-gradient(45deg, #24160d 0, #24160d 1px, #332013 0, #332013 50%);
 }
 
 #classification {
     align-self: center;
-    border: 1px solid black;
     border-collapse: collapse;
+    background-color: #24160d;
+    background-size: 32px 32px;
+    background-image: repeating-linear-gradient(135deg, #180e09 0, #180e09 1px, #24160d 0, #24160d 50%);
+    width: 30%;
 }
 
 .class_cell, .class_row, .class_head {
-    border: 1px solid black;
-    padding: 10px;
+    border: 1px solid #180e09;
+    padding: 3%;
+    color: lightgray;
 }
 
 .class_row:hover {
-    background-color: lightgray;
+    background-color: #24160d;
 }
 
 .playable_house:hover {
@@ -288,18 +306,28 @@ logo {
     font-size: 2.5cm;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     color: darkgoldenrod;
-    border: 3px solid brown;
     top: 1vh;
     left: 1vh;
     position: absolute;
+    background-color: #24160d;
+    background-size: 32px 32px;
+    background-image: repeating-linear-gradient(135deg, #180e09 0, #180e09 1px, #24160d 0, #24160d 50%);
+    border: 2px solid #200d00;
 }
 
 playAIButton {
-    border: 3px solid brown;
+    /*border: 3px solid brown;*/
+    color: white;
     font-size: 1.5cm;
     bottom: 1vh;
     left: 1vh;
     position: absolute;
+    background-color: #24160d;
+    background-size: 32px 32px;
+    background-image: repeating-linear-gradient(135deg, #180e09 0, #180e09 1px, #24160d 0, #24160d 50%);
+    border: 2px solid #200d00;
+    padding: 1%;
+    border-radius: 5%;
 }
 
 @keyframes turnMessageAnimation {
@@ -321,17 +349,15 @@ turnMessage {
 /* Indentification */
 
 #identification {
-    background-color: #4b1e00;
-    opacity: 0.8;
+    background-color: #332013;
     background-size: 32px 32px;
-    background-image: repeating-linear-gradient(45deg, #311400 0, #311400 1px, #4b1e00 0, #4b1e00 50%);
+    background-image: repeating-linear-gradient(45deg, #24160d 0, #24160d 1px, #332013 0, #332013 50%);
 }
 
 .login {
-    background-color: #311400;
-    opacity: 1;
+    background-color: #24160d;
     background-size: 32px 32px;
-    background-image: repeating-linear-gradient(135deg, #200d00 0, #200d00 1px, #311400 0, #311400 50%);
+    background-image: repeating-linear-gradient(135deg, #180e09 0, #180e09 1px, #24160d 0, #24160d 50%);
     border: 2px solid #200d00;
 
     position: absolute;
@@ -339,6 +365,7 @@ turnMessage {
     transform: translate(0, -50%);
     right: 37%;
     padding: 3%;
+    border-radius: 5%;
 
     font-size:x-large;
     color: lightgray;
