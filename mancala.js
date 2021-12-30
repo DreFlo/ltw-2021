@@ -280,6 +280,8 @@ let houseNumberChooser = document.getElementById("houses_number");
 
 let seedNumberChooser = document.getElementById("seeds_number");
 
+let gameModeChooser = document.getElementById("game_mode");
+
 let startGameButton = document.getElementById("start_game_button");
 
 let game = undefined;
@@ -290,7 +292,10 @@ let house = 0;
 
 let playNext = null;
 
+let gameMode = PVP;
+
 function setPlay() {
+    console.log(gameMode);
     showTurnMessage();
     for(let i = 0; i < game.houseNumber; i++) {
         if (game.mode === PVP) {
@@ -425,8 +430,9 @@ function updateBoard() {
     }
 }
 
-function setBoard(houses, seeds) {
-    game = new Game(houses, seeds, RAND_AI);
+function setBoard(houses, seeds, gameMode) {
+    console.log("Game mode ", gameMode);
+    game = new Game(houses, seeds, gameMode);
 
     let topRow = document.getElementById("topRow");
 
@@ -462,11 +468,21 @@ function setBoard(houses, seeds) {
 }
 
 houseNumberChooser.onchange = function() {
-    setBoard(houseNumberChooser.value, seedNumberChooser.value);
+    setBoard(houseNumberChooser.value, seedNumberChooser.value, gameMode);
 };
 
 seedNumberChooser.onchange = function() {
-    setBoard(houseNumberChooser.value, seedNumberChooser.value);
+    setBoard(houseNumberChooser.value, seedNumberChooser.value, gameMode);
+};
+
+gameModeChooser.onchange = function() {
+    if (gameModeChooser.value == 0) gameMode = PVP;
+    else if (gameModeChooser.value == 1) gameMode = RAND_AI;
+    else if (gameModeChooser.value == 2) gameMode = BEST_MOVE_AI;
+    else {
+        gameMode = PVP;
+    } 
+    setBoard(houseNumberChooser.value, seedNumberChooser.value, gameMode);
 };
 
 startGameButton.onclick = function () {
@@ -474,7 +490,7 @@ startGameButton.onclick = function () {
     config_modal.style.display = "none";
 }
 
-setBoard(houseNumberChooser.value, seedNumberChooser.value);
+setBoard(houseNumberChooser.value, seedNumberChooser.value, gameMode);
 
 /* Leaderboard */
 

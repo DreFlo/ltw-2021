@@ -304,8 +304,8 @@ playAIButton {
 
 @keyframes turnMessageAnimation {
     0% {visibility: hidden; color: transparent; z-index: -1; font-size: 0cm; display: none;}
-    40% {visibility: visible; color: red; z-index: 9999; font-size: 5cm}
-    60% {visibility: visible; color: yellow; z-index: 9999; font-size: 7cm;}
+    33% {visibility: visible; color: red; z-index: 9999; font-size: 5cm}
+    66% {visibility: visible; color: yellow; z-index: 9999; font-size: 7cm;}
     100% {visibility: hidden; color: transparent; z-index: -1; font-size: 0cm; display: none;}
 }
 
