@@ -63,7 +63,7 @@ async function notify(nick, password, game, move){
 
     const response = await request;
 
-    if (req.ok)
+    if (response.ok)
         return 'Successful notify';
     else {
         const data = await response.json();
@@ -147,7 +147,7 @@ async function update(nick, game){
     const source = new EventSource(url);
 
     source.onmessage = function(event) {
-        console.log('Started', event.data);
+        handleEventMessage(JSON.parse(event.data));
     }
 
     return source;
@@ -208,7 +208,7 @@ for(let i = 0; i < tds.length(); i++){
 const PVP = 0;
 const RAND_AI = 1;
 const BEST_MOVE_AI = 2;
-const ONLINE = 4;
+const ONLINE = 3;
 
 function getRandomInt(max) {
     let temp = Math.floor(Math.random() * max);
@@ -270,6 +270,11 @@ class House {
 
     setContainer(container) {
         this.container = container;
+    }
+
+    setSeeds(seeds) {
+        this.changed(seeds - this.seedNumber);
+        this.seedNumber = seeds;
     }
 
     changed(seeds) {
@@ -471,6 +476,10 @@ let seedNumber = undefined;
 
 let onlineGame = undefined;
 
+let turn = undefined;
+
+let eventSource = undefined;
+
 function setPlay() {
     console.log(gameMode);
     showTurnMessage();
@@ -489,18 +498,25 @@ function setPlay() {
             };
         }
         game.playerRow.houses[i].container.onclick = function(){
-            if (player) {
-                playNext = game.playerRow.startSeedAt(i + 1);
-                if (!playNext) {
-                    player = false;
+            if (gameMode !== ONLINE) {
+                if (player) {
+                    playNext = game.playerRow.startSeedAt(i + 1);
+                    if (!playNext) {
+                        player = false;
+                    }
+                    updateBoard();
+                    showTurnMessage();
+                    if(game.adversaryRow.empty() || game.playerRow.empty()) checkWinner();
                 }
-                updateBoard();
-                showTurnMessage();
-                if(game.adversaryRow.empty() || game.playerRow.empty()) checkWinner();
+            }
+            else {
+                if (player) {
+                    notify(username, password, onlineGame, i);
+                }
             }
         };
     }
-    if (game.mode !== PVP) {
+    if (game.mode === RAND_AI || game.mode === BEST_MOVE_AI) {
         let gameSection = document.getElementById("game");
         let playAIButton = document.createElement("playAIButton");
         gameSection.appendChild(playAIButton);
@@ -600,9 +616,9 @@ function updateBoard() {
     updateHouseSeeds(game.playerRow.storehouse.container, game.playerRow.storehouse.added);
     game.playerRow.storehouse.resetAdded();
 
-    if(player && game.mode !== PVP) {
+    if(player && (game.mode === RAND_AI || game.mode === BEST_MOVE_AI)) {
         document.getElementById("playAIButton").classList.remove("playable_house");
-    } else if (!player && game.mode !== PVP) {
+    } else if (!player && (game.mode === RAND_AI || game.mode === BEST_MOVE_AI)) {
         document.getElementById("playAIButton").classList.add("playable_house");
     }
 }
@@ -658,8 +674,8 @@ gameModeChooser.onchange = function() {
     if (gameModeChooser.value == 0) gameMode = PVP;
     else if (gameModeChooser.value == 1) gameMode = RAND_AI;
     else if (gameModeChooser.value == 2) gameMode = BEST_MOVE_AI;
-    else if (gameModeChooser.value == 2) {
-        gameMode = loggedIn ? ONLINE : PVP;
+    else if (gameModeChooser.value == 3) {
+        gameMode = ONLINE;
     } 
     setBoard(houseNumberChooser.value, seedNumberChooser.value, gameMode);
 };
@@ -672,12 +688,44 @@ loginButton.onclick = async function() {
 
     onlineGame = await join(66, username, password, houseNumber, seedNumber);
 
-    update(username, onlineGame);
+    eventSource = update(username, onlineGame);
 }
 
 startGameButton.onclick = function () {
     setPlay();
     config_modal.style.display = "none";
+}
+
+function handleBoard(board) {
+    console.log(board, board.turn, board.sides);
+    player = board.turn === username;
+    console.log(player);
+    for (let side in board.sides) {
+        if (side === username) {
+            for (let i = 0; i < game.houseNumber; i++) {
+                game.playerRow.houses[i].setSeeds(board.sides[side].pits[i]);
+            }
+            game.playerRow.storehouse.setSeeds(board.sides[side].store);
+        }
+        else if (side !== username) {
+            for (let i = 0; i < game.houseNumber; i++) {
+                game.adversaryRow.houses[i].setSeeds(board.sides[side].pits[i]);
+            }
+            game.adversaryRow.storehouse.setSeeds(board.sides[side].store);
+        }
+    }
+    updateBoard();
+    showTurnMessage();
+}
+
+function handleEventMessage(message) {
+    if (message.hasOwnProperty('winner')) {
+        leave(username, password, onlineGame);
+        eventSource.close();
+    } 
+    else if (message.hasOwnProperty('board')) {
+        handleBoard(message.board);
+    }
 }
 
 setBoard(houseNumberChooser.value, seedNumberChooser.value, gameMode);
