@@ -1,7 +1,7 @@
 const server = 'http://twserver.alunos.dcc.fc.up.pt:8008/';
 
 // Grupo é só pra debugging - TIRAR NO FIM
-// UNTESTED
+// WORKING
 async function join(group, nick, password, size, initial){
     const url = server + 'join';
 
@@ -18,10 +18,13 @@ async function join(group, nick, password, size, initial){
 
     const response = await request;
     let data = await response.json();
+
+    console.log(data);
+
     return data.game;
 }
 
-// UNFINISHED - Não tenho certeza qual deve ser return
+// WORKING
 async function leave(nick, password, game){
     const url = server + 'leave';
 
@@ -35,8 +38,13 @@ async function leave(nick, password, game){
     });
 
     const response = await request;
-    let data = await response.json();
-    return data.game;
+
+    if (response.ok)
+        return 'Successful leave';
+    else {
+        const data = await response.json();
+        return data.err;
+    }
 }
 
 // UNTESTED
@@ -100,10 +108,11 @@ async function ranking(){
     });
 }
 
+// up201907001 pass
 // register('zp', 'secret');
 // WORKING
 async function register(nick, password){
-    const url = server + 'ranking';
+    const url = server + 'register';
 
     const request = fetch(url, {
         method: 'POST',
