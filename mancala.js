@@ -1,3 +1,165 @@
+const server = 'http://twserver.alunos.dcc.fc.up.pt:8008/';
+
+// Grupo é só pra debugging - TIRAR NO FIM
+// WORKING
+async function join(group, nick, password, size, initial){
+    const url = server + 'join';
+
+    const request = fetch(url, {
+        method: 'POST',
+        body: JSON.stringify({
+            'group': group,
+            'nick': nick,
+            'password': password,
+            'size': size,
+            'initial': initial
+        })
+    });
+
+    const response = await request;
+    let data = await response.json();
+
+    console.log(data);
+
+    return data.game;
+}
+
+// WORKING
+async function leave(nick, password, game){
+    const url = server + 'leave';
+
+    const request = fetch(url, {
+        method: 'POST',
+        body: JSON.stringify({
+            'nick': nick,
+            'password': password,
+            'game': game
+        })
+    });
+
+    const response = await request;
+
+    if (response.ok)
+        return 'Successful leave';
+    else {
+        const data = await response.json();
+        return data.err;
+    }
+}
+
+// UNTESTED
+async function notify(nick, password, game, move){
+    const url = server + 'notify';
+
+    const request = fetch(url, {
+        method: 'POST',
+        body: JSON.stringify({
+            'nick': nick,
+            'password': password,
+            'game': game,
+            'move': move
+        })
+    });
+
+    const response = await request;
+
+    if (req.ok)
+        return 'Successful notify';
+    else {
+        const data = await response.json();
+        return data.err;
+    }
+}
+
+// ranking();
+// WORKING
+async function ranking(){
+    const url = server + 'ranking';
+
+    const request = fetch(url, {
+        method: 'POST',
+        body: JSON.stringify({})
+    });
+
+    const response = await request;
+    const data = await response.json();
+
+    let class_table = document.getElementById("classification");
+    while(class_table.children.length > 1){
+        class_table.removeChild(class_table.lastChild);
+    }
+
+    data.ranking.forEach(entry => {
+        let class_row = class_table.insertRow();
+        class_row.classList.add("class_row");
+
+        let class_row_nick = class_row.insertCell(0);
+        class_row_nick.classList.add("class_cell");
+        
+        let class_row_victories = class_row.insertCell(1);
+        class_row_victories.classList.add("class_cell");
+
+        let class_row_games = class_row.insertCell(2);
+        class_row_games.classList.add("class_cell");
+
+        class_row_nick.innerHTML = entry.nick;
+        class_row_victories.innerHTML = entry.victories;
+        class_row_games.innerHTML = entry.games;
+    });
+}
+
+// account - up201907001 pass
+// register('zp', 'secret');
+// WORKING
+async function register(nick, password){
+    const url = server + 'register';
+
+    const request = fetch(url, {
+        method: 'POST',
+        body: JSON.stringify({
+            'nick': nick,
+            'password': password
+        })
+    });
+
+    const response = await request;
+    
+    if(response.ok){
+        return 'Successful register';
+    }
+    else {
+        const data = await response.json();
+        return data.err;
+    }
+}
+
+// EventSource tem de ser fechado no fim do jogo!
+// UNTESTED
+async function update(nick, game){
+    const url = new URL(server + 'update');
+
+    let args = [
+        ['nick', nick],
+        ['game', game]
+    ];
+    url.search = new URLSearchParams(args).toString();
+
+    const source = new EventSource(url);
+
+    source.onmessage = function(event) {
+        console.log('Started', event.data);
+    }
+
+    return source;
+}
+
+async function func() {
+    let game_1 = await join(66, 'up201907001', 'pass', 8, 8);
+    let src_1 = update('up201907001', game_1);
+    let game_2 = await join(66, 'up201907014', 'pass', 8, 8);
+    let src_2 = update('up201907014', game_2);
+}
+
 // Get the modal
 let inst_modal = document.getElementById("instructions");
         
@@ -46,6 +208,7 @@ for(let i = 0; i < tds.length(); i++){
 const PVP = 0;
 const RAND_AI = 1;
 const BEST_MOVE_AI = 2;
+const ONLINE = 4;
 
 function getRandomInt(max) {
     let temp = Math.floor(Math.random() * max);
@@ -284,6 +447,8 @@ let gameModeChooser = document.getElementById("game_mode");
 
 let startGameButton = document.getElementById("start_game_button");
 
+let loginButton = document.getElementById("login_button");
+
 let game = undefined;
 
 let player = true;
@@ -293,6 +458,18 @@ let house = 0;
 let playNext = null;
 
 let gameMode = PVP;
+
+let username = undefined;
+
+let password = undefined;
+
+let loggedIn = false;
+
+let houseNumber = undefined;
+
+let seedNumber = undefined;
+
+let onlineGame = undefined;
 
 function setPlay() {
     console.log(gameMode);
@@ -433,6 +610,8 @@ function updateBoard() {
 function setBoard(houses, seeds, gameMode) {
     console.log("Game mode ", gameMode);
     game = new Game(houses, seeds, gameMode);
+    houseNumber = houses;
+    seedNumber = seeds;
 
     let topRow = document.getElementById("topRow");
 
@@ -479,11 +658,22 @@ gameModeChooser.onchange = function() {
     if (gameModeChooser.value == 0) gameMode = PVP;
     else if (gameModeChooser.value == 1) gameMode = RAND_AI;
     else if (gameModeChooser.value == 2) gameMode = BEST_MOVE_AI;
-    else {
-        gameMode = PVP;
+    else if (gameModeChooser.value == 2) {
+        gameMode = loggedIn ? ONLINE : PVP;
     } 
     setBoard(houseNumberChooser.value, seedNumberChooser.value, gameMode);
 };
+
+loginButton.onclick = async function() {
+    username = document.getElementById("uname_input").value;
+    password = document.getElementById("password_input").value;
+
+    console.log(username, password);
+
+    onlineGame = await join(66, username, password, houseNumber, seedNumber);
+
+    update(username, onlineGame);
+}
 
 startGameButton.onclick = function () {
     setPlay();

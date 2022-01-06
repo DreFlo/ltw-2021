@@ -108,7 +108,7 @@ async function ranking(){
     });
 }
 
-// up201907001 pass
+// account - up201907001 pass
 // register('zp', 'secret');
 // WORKING
 async function register(nick, password){
@@ -145,5 +145,17 @@ async function update(nick, game){
     url.search = new URLSearchParams(args).toString();
 
     const source = new EventSource(url);
+
+    source.onmessage = function(event) {
+        console.log(event.data);
+    }
+
     return source;
+}
+
+async function func() {
+    let game_1 = await join(66, 'up201907001', 'pass', 8, 8);
+    let src_1 = update('up201907001', game_1);
+    let game_2 = await join(66, 'up201907014', 'pass', 8, 8);
+    let src_2 = update('up201907014', game_2);
 }
