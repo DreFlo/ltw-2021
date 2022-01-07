@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Mancala</title>
     <script type="text/javascript" src="mancala.js" defer></script>
+    <script type="text/javascript" src="requests.js" defer></script>
     <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 
@@ -60,7 +61,15 @@
                 </tr>
                 <tr class="config_row">
                     <td class="config_cell"> Game mode </td>
-                    <td class="config_cell"><input class="config_number_select" id=game_mode type="number" value="0" min="0" max="3" step="1"></td>
+                    <!--<td class="config_cell"><input class="config_number_select" id=game_mode type="number" value="0" min="0" max="3" step="1"></td>-->
+                    <td class="config_cell">
+                        <select class="config_number_select" name="game_mode" id="game_mode">
+                            <option class="config_number_select" value="3">Player Vs. Player Online</option>
+                            <option class="config_number_select" value="0">Player Vs. Player on 1 computer</option>
+                            <option class="config_number_select" value="1">Player Vs. Random AI</option>
+                            <option class="config_number_select" value="2">Player Vs. Best Move AI</option>
+                        </select>
+                    </td>
                 </tr>
             </table>
             <!--
@@ -85,8 +94,13 @@
 
             <div class="id_btns">
                 <button type="submit" class="login_btn" id="login_button">Login</button>
-                <button type="submit" class="anonymous_btn">Anonymous</button>
             </div>
+            <div class="id_btns">
+                <button type="submit" class="register_btn" id="register_button">Register</button>
+            </div>
+
+            <a id="reg_success"> </a>
+            <a id="reg_failure"> </a>
         </div>
     </section>
  
@@ -102,6 +116,7 @@
             <storehouse id="rightStorehouse">
             </storehouse>            
         </board>
+        <button type="submit" class="leave_btn" id="leave_button">Leave Game</button>
     </section>
 
     <section id="leaderboard">

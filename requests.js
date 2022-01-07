@@ -1,3 +1,4 @@
+
 const server = 'http://twserver.alunos.dcc.fc.up.pt:8008/';
 
 // Grupo é só pra debugging - TIRAR NO FIM
@@ -43,7 +44,7 @@ async function leave(nick, password, game){
         return 'Successful leave';
     else {
         const data = await response.json();
-        return data.err;
+        return data.error;
     }
 }
 
@@ -63,11 +64,11 @@ async function notify(nick, password, game, move){
 
     const response = await request;
 
-    if (req.ok)
+    if (response.ok)
         return 'Successful notify';
     else {
         const data = await response.json();
-        return data.err;
+        return data.error;
     }
 }
 
@@ -129,13 +130,13 @@ async function register(nick, password){
     }
     else {
         const data = await response.json();
-        return data.err;
+        return data.error;
     }
 }
 
 // EventSource tem de ser fechado no fim do jogo!
 // UNTESTED
-async function update(nick, game){
+async function update(nick, game, errorFunc){
     const url = new URL(server + 'update');
 
     let args = [
@@ -146,16 +147,11 @@ async function update(nick, game){
 
     const source = new EventSource(url);
 
+    source.onerror = errorFunc;
+
     source.onmessage = function(event) {
-        console.log(event.data);
+        handleEventMessage(JSON.parse(event.data));
     }
 
     return source;
-}
-
-async function func() {
-    let game_1 = await join(66, 'up201907001', 'pass', 8, 8);
-    let src_1 = update('up201907001', game_1);
-    let game_2 = await join(66, 'up201907014', 'pass', 8, 8);
-    let src_2 = update('up201907014', game_2);
 }

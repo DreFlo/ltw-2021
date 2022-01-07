@@ -203,6 +203,20 @@ storehouse {
     right : 3%;
 }
 
+#leave_button {
+    background-color: #24160d;
+    background-size: 32px 32px;
+    background-image: repeating-linear-gradient(135deg, #180e09 0, #180e09 1px, #24160d 0, #24160d 50%);
+    border: 2px solid #180e09;
+    border-radius: 50%;
+
+    color: red;
+    font-size: x-large;
+
+    margin-left: 80%;
+    margin-top: 15%;
+    padding: 2%;
+}
 
 /* Configurations */
 
@@ -344,6 +358,7 @@ turnMessage {
     justify-self: center;
     animation-name: turnMessageAnimation;
     animation-duration: 2s;
+    color: transparent;
 }
 
 /* Indentification */
@@ -385,21 +400,28 @@ input[type=text], input[type=password] {
     box-sizing: border-box;
   }
 
-.login_btn, .anonymous_btn {
+.login_btn, .register_btn {
     color: black;
     padding: 2%;
 }
 
-.login_btn:hover, .anonymous_btn:hover {
+.login_btn:hover, .register_btn:hover {
     opacity: 0.8;
 }
 
-.login_btn {
+.login_btn, .register_btn {
     margin-top: 3%;
     width: 100%;
 }
 
-.anonymous_btn {
-    margin-top: 3%;
-    width: 100%;
+.register_btn {
+    margin-bottom: 7%;
+}
+
+#reg_success {
+    color: green;
+}
+
+#reg_failure{
+    color: red;
 }
