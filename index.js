@@ -27,15 +27,13 @@ const server = http.createServer(function (request, response) {
                 console.log('Register request');
                 console.log(`Data: ${JSON.stringify(data)}`);
 
-                let accounts;
-
                 fs.readFile('./accounts.json', 'utf-8', async function (readErr, fileData) {
                     if(readErr) {
                         console.log(`Error reading file: ${err}`);
                     }
                     else {
                         let updateFile = true;
-                        accounts = JSON.parse(fileData);
+                        let accounts = JSON.parse(fileData);
 
                         console.log(`Accounts: ${JSON.stringify(accounts)}`);
 
