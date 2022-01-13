@@ -552,7 +552,7 @@ loginButton.onclick = async function() {
     if(reg == 'Successful register'){
         game_section.scrollIntoView();
         onlineGame = await join(66, username, password, houseNumber, seedNumber);
-        evtSource = update(username, onlineGame);
+        evtSource = update(username, onlineGame, errorFunc);
     }
     else{
         failure.innerHTML = reg;
