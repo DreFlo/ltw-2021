@@ -1,5 +1,6 @@
 
 const server = 'http://twserver.alunos.dcc.fc.up.pt:8008/';
+const ourServer = 'http://localhost:9066/';
 
 // Grupo é só pra debugging - TIRAR NO FIM
 // WORKING
@@ -113,7 +114,7 @@ async function ranking(){
 // register('zp', 'secret');
 // WORKING
 async function register(nick, password){
-    const url = server + 'register';
+    const url = ourServer + 'register';
 
     const request = fetch(url, {
         method: 'POST',
@@ -130,6 +131,7 @@ async function register(nick, password){
     }
     else {
         const data = await response.json();
+        console.log(data);
         return data.error;
     }
 }
