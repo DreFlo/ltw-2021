@@ -1,7 +1,7 @@
 var http = require('http');
+var https = require('https');
 var fs = require('fs');
 const url  = require('url');
-//const fetch = require('node-fetch');
 var PORT = 9066; //8966
 
 const server = http.createServer(function (request, response) {
@@ -33,6 +33,7 @@ const server = http.createServer(function (request, response) {
                     }
                     else {
                         let updateFile = true;
+                        let responseSent = false;
                         let accounts = JSON.parse(fileData);
 
                         console.log(`Accounts: ${JSON.stringify(accounts)}`);
@@ -40,53 +41,61 @@ const server = http.createServer(function (request, response) {
                         accounts.forEach(account => {
                             if(account.nick === data.nick && account.password === data.password) {
                                 updateFile = false;
+                                responseSent = true;
                                 response.writeHead(200, {'Content-Type': 'text/plain'});
                                 response.end('Succesful register');
                             }
                             else if(account.nick === data.nick && account.password !== data.password) {
                                 updateFile = false;
+                                responseSent = true;
                                 response.writeHead(400, {'Content-Type': 'text/plain'});
                                 response.end('Failure');
                             }
                         });
 
-                        /*
-                        Request to LTW server not working
-
-                        const url = 'http://twserver.alunos.dcc.fc.up.pt:8008/register';
-
-                        const ltwRequest = fetch(url, {
-                            method: 'POST',
-                            body: JSON.stringify(data)
-                        });
-
-                        const ltwResponse = await ltwRequest;
-                        
-                        if(!ltwResponse.ok){
-                            updateFile = false;
-                        }
-
-                        */
-
-                        if (updateFile) {
-                            accounts.push(data);
-
-                            console.log(`Updated Accounts: ${JSON.stringify(accounts)}`);
-
-                            fs.writeFile('./accounts.json', JSON.stringify(accounts), 'utf-8', (writeErr) => {
-                                if (writeErr) {
-                                    console.log(`Error writing file: ${err}`);
-                                } else {
-                                    console.log(`File is written successfully!`);
+                        if (!responseSent) {
+                            const options = {
+                                hostname: 'http://twserver.alunos.dcc.fc.up.pt',
+                                port: 8008,
+                                path: '/register',
+                                method: 'POST',
+                                headers: {
+                                'Content-Type': 'application/json',
+                                'Content-Length': dataString.length
                                 }
+                            }
+
+                            const ltwRequest = https.request(options, response => {
+                                updateFile = response.ok;
                             });
 
-                            response.writeHead(200, {'Content-Type': 'text/plain'});
-                            response.end('Succesful register');
-                        }
-                        else {
-                            response.writeHead(400, {'Content-Type': 'text/plain'});
-                            response.end('Failure');
+                            ltwRequest.on('error', error => {
+                                console.error(error);
+                            });
+
+                            ltwRequest.write(dataString);
+                            ltwRequest.end();
+
+                            if (updateFile) {
+                                accounts.push(data);
+
+                                console.log(`Updated Accounts: ${JSON.stringify(accounts)}`);
+
+                                fs.writeFile('./accounts.json', JSON.stringify(accounts), 'utf-8', (writeErr) => {
+                                    if (writeErr) {
+                                        console.log(`Error writing file: ${err}`);
+                                    } else {
+                                        console.log(`File is written successfully!`);
+                                    }
+                                });
+
+                                response.writeHead(200, {'Content-Type': 'text/plain'});
+                                response.end('Succesful register');
+                            }
+                            else {
+                                response.writeHead(400, {'Content-Type': 'text/plain'});
+                                response.end('Failure');
+                            }
                         }
                     }
                 });
