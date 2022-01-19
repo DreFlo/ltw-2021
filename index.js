@@ -33,7 +33,7 @@ const server = http.createServer(function (request, response) {
                     }
                     else {
                         let updateFile = true;
-                        let responseSent = false;
+                        let status = 200;
                         let accounts = JSON.parse(fileData);
 
                         console.log(`Accounts: ${JSON.stringify(accounts)}`);
@@ -41,66 +41,52 @@ const server = http.createServer(function (request, response) {
                         accounts.forEach(account => {
                             if(account.nick === data.nick && account.password === data.password) {
                                 updateFile = false;
-                                responseSent = true;
-                                response.writeHead(200, {'Content-Type': 'text/plain'});
-                                response.end('Succesful register');
                             }
                             else if(account.nick === data.nick && account.password !== data.password) {
                                 updateFile = false;
-                                responseSent = true;
-                                response.writeHead(400, {'Content-Type': 'text/plain'});
-                                response.end('Failure');
-                            }
+                                status = 401;                            }
                         });
 
-                        if (!responseSent) {
-                            const options = {
-                                hostname: 'http://twserver.alunos.dcc.fc.up.pt',
-                                port: 8008,
-                                path: '/register',
-                                method: 'POST',
-                                headers: {
-                                'Content-Type': 'application/json',
-                                'Content-Length': dataString.length
+                        if (updateFile) {
+                            accounts.push(data);
+
+                            console.log(`Updated Accounts: ${JSON.stringify(accounts)}`);
+
+                            fs.writeFile('./accounts.json', JSON.stringify(accounts), 'utf-8', (writeErr) => {
+                                if (writeErr) {
+                                    console.log(`Error writing file: ${err}`);
+                                } else {
+                                    console.log(`File is written successfully!`);
                                 }
-                            }
-
-                            const ltwRequest = https.request(options, response => {
-                                updateFile = response.ok;
                             });
-
-                            ltwRequest.on('error', error => {
-                                console.error(error);
-                            });
-
-                            ltwRequest.write(dataString);
-                            ltwRequest.end();
-
-                            if (updateFile) {
-                                accounts.push(data);
-
-                                console.log(`Updated Accounts: ${JSON.stringify(accounts)}`);
-
-                                fs.writeFile('./accounts.json', JSON.stringify(accounts), 'utf-8', (writeErr) => {
-                                    if (writeErr) {
-                                        console.log(`Error writing file: ${err}`);
-                                    } else {
-                                        console.log(`File is written successfully!`);
-                                    }
-                                });
-
-                                response.writeHead(200, {'Content-Type': 'text/plain'});
-                                response.end('Succesful register');
-                            }
-                            else {
-                                response.writeHead(400, {'Content-Type': 'text/plain'});
-                                response.end('Failure');
-                            }
                         }
+
+                        response.writeHead(status, {'Content-Type': 'text/plain'});
+                        response.end();
                     }
                 });
                 break;
             case '/ranking':
+                console.log('Ranking request');
+                fs.readFile('./ranking.json', 'utf-8', async function (readErr, fileData) {
+                    if(readErr) {
+                        console.log(`Error in reading file: ${err}`);
+                    }
+                    else {
+                        let rankings = JSON.parse(fileData);
+                        let read_values = rankings.ranking;
+                        let values_to_send = {"rankings":[]};
+
+                        for(let i = 0; i < 10; i++){
+                            values_to_send.rankings[i] = read_values[i];
+                        }
+                        
+                        console.log(`Data sent: ${values_to_send}`);
+                        response.writeHead(values_to_send, {'Content-Type': 'text/plain'});
+                        response.end();
+                    }
+                });
+
                 break;
         }
     })

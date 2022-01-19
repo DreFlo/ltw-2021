@@ -309,6 +309,8 @@ let registerButton = document.getElementById("register_button");
 
 let game_section = document.getElementById("game");
 
+let ranking_section = document.getElementById("leaderboard");
+
 let leaveButton = document.getElementById("leave_button");
 
 let game = undefined;
@@ -336,6 +338,8 @@ let onlineGame = undefined;
 let turn = undefined;
 
 let evtSource = undefined;
+
+let timeoutID;
 
 function setPlay() {
     console.log(gameMode);
@@ -368,7 +372,9 @@ function setPlay() {
             }
             else {
                 if (player) {
+                    clearTimeout(timeoutID);
                     notify(username, password, onlineGame, i);
+                    timeoutID = setTimeout(() => {execute_leave()}, 10000) //Tempo certo: 120 000
                 }
             }
         };
@@ -553,6 +559,7 @@ loginButton.onclick = async function() {
         game_section.scrollIntoView();
         onlineGame = await join(66, username, password, houseNumber, seedNumber);
         evtSource = update(username, onlineGame, errorFunc);
+        timeoutID = setTimeout(() => {execute_leave()}, 10000); //Tempo certo: 120 000
     }
     else{
         failure.innerHTML = reg;
@@ -608,8 +615,7 @@ function handleBoard(board) {
 
 function handleEventMessage(message) {
     if (message.hasOwnProperty('winner')) {
-        leave(username, password, onlineGame);
-        evtSource.close();
+        execute_leave();
     } 
     else if (message.hasOwnProperty('board')) {
         handleBoard(message.board);
@@ -625,9 +631,19 @@ async function errorFunc() {
 
 setBoard(houseNumberChooser.value, seedNumberChooser.value, gameMode);
 
-leaveButton.onclick = function() {
+leaveButton.onclick = function () {
+    execute_leave();
+}
+
+async function execute_leave() {
     leave(username, password, onlineGame);
     evtSource.close();
+    get_ranking();
+}
+
+function get_ranking() {
+    game_section.scrollIntoView();
+    ranking();
 }
 
 /* Leaderboard */

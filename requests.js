@@ -114,9 +114,11 @@ async function ranking(){
 // register('zp', 'secret');
 // WORKING
 async function register(nick, password){
-    const url = ourServer + 'register';
+    const url_1 = server + 'register';
+    
+    const url_2 = ourServer + 'register';
 
-    const request = fetch(url, {
+    const request_1 = fetch(url_1, {
         method: 'POST',
         body: JSON.stringify({
             'nick': nick,
@@ -124,13 +126,33 @@ async function register(nick, password){
         })
     });
 
-    const response = await request;
-    
-    if(response.ok){
-        return 'Successful register';
+    const response_1 = await request_1;
+
+    if (response_1.ok) {
+        console.log("Response 1 ok");
+
+        const request_2 = fetch(url_2, {
+            method: 'POST',
+            body: JSON.stringify({
+                'nick': nick,
+                'password': password
+            })
+        });
+
+        const response_2 = await request_2;
+
+        if (response_2.ok) {
+            console.log("Succesful register");
+            return 'Successful register';
+        }
+        else {
+            const data = await response_2.json();
+            console.log(data);
+            return data.error;
+        }
     }
     else {
-        const data = await response.json();
+        const data = await response_1.json();
         console.log(data);
         return data.error;
     }
