@@ -76,7 +76,8 @@ async function notify(nick, password, game, move){
 // ranking();
 // WORKING
 async function ranking(){
-    const url = server + 'ranking';
+    /*const url = server + 'ranking';*/
+    const url = ourServer + 'ranking';
 
     const request = fetch(url, {
         method: 'POST',

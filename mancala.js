@@ -44,6 +44,7 @@ let login_section = document.getElementById("identification");
 window.onload = function() {
     login_section.scrollIntoView();
     config_modal.style.display = "block";
+    ranking();
 }
 
 

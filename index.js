@@ -75,15 +75,21 @@ const server = http.createServer(function (request, response) {
                     else {
                         let rankings = JSON.parse(fileData);
                         let read_values = rankings.ranking;
-                        let values_to_send = {"rankings":[]};
-
-                        for(let i = 0; i < 10; i++){
-                            values_to_send.rankings[i] = read_values[i];
+                        let values_to_send = [];
+                        
+                        if(read_values.length < 10){
+                            read_values.forEach(value => {
+                                values_to_send.push(value);
+                            })
+                        }
+                        else{
+                            for(let i = 0; i < 10; i++){
+                                values_to_send.push(read_values[i]);
+                            }
                         }
                         
-                        console.log(`Data sent: ${values_to_send}`);
-                        response.writeHead(values_to_send, {'Content-Type': 'text/plain'});
-                        response.end();
+                        response.writeHead(200, {'Content-Type': 'text/plain'});
+                        response.end(JSON.stringify({ranking:values_to_send}));
                     }
                 });
 
