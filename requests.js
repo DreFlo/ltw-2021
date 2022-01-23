@@ -1,5 +1,5 @@
 const server = 'http://twserver.alunos.dcc.fc.up.pt:8008/';
-const ourServer = 'http://localhost:9066/';
+const ourServer = 'http://twserver.alunos.dcc.fc.up.pt:9066/'; //8966
 
 // Grupo é só pra debugging - TIRAR NO FIM
 // WORKING

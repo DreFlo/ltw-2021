@@ -29,7 +29,17 @@ const server = http.createServer(function (request, response) {
 
                 fs.readFile('./accounts.json', 'utf-8', async function (readErr, fileData) {
                     if(readErr) {
-                        console.log(`Error reading file: ${err}`);
+                        accounts = [data];
+                        fs.writeFile('./accounts.json', JSON.stringify(accounts), 'utf-8', (writeErr) => {
+                            if (writeErr) {
+                                console.log(`Error writing file: ${writeErr}`);
+                            } else {
+                                console.log(`File is written successfully!`);
+                            }
+                        });
+                        
+                        response.writeHead(200, {'Content-Type': 'text/plain'});
+                        response.end();
                     }
                     else {
                         let updateFile = true;
@@ -54,7 +64,7 @@ const server = http.createServer(function (request, response) {
 
                             fs.writeFile('./accounts.json', JSON.stringify(accounts), 'utf-8', (writeErr) => {
                                 if (writeErr) {
-                                    console.log(`Error writing file: ${err}`);
+                                    console.log(`Error writing file: ${writeErr}`);
                                 } else {
                                     console.log(`File is written successfully!`);
                                 }
@@ -70,7 +80,9 @@ const server = http.createServer(function (request, response) {
                 console.log('Ranking request');
                 fs.readFile('./ranking.json', 'utf-8', async function (readErr, fileData) {
                     if(readErr) {
-                        console.log(`Error in reading file: ${err}`);
+                        console.log(`Error in reading file: ${readErr}`);
+                        response.writeHead(200, {'Content-Type': 'text/plain'});
+                        response.end(JSON.stringify({ranking:[]}));
                     }
                     else {
                         let rankings = JSON.parse(fileData);
@@ -97,7 +109,25 @@ const server = http.createServer(function (request, response) {
                 console.log('Save Ranking request');
                 fs.readFile('./ranking.json', 'utf-8', async function (readErr, fileData) {
                     if(readErr) {
-                        console.log(`Error in reading file: ${err}`);
+                        console.log(`Error in reading file: ${readErr}`);
+                        curr_user = {nick:data.nick, victories:0, games:0};
+                        if(data.winner == data.nick){ //Win
+                            curr_user.victories += 1;
+                        }
+            
+                        curr_user.games += 1;
+
+                        fs.writeFile('./ranking.json', JSON.stringify({ranking:[curr_user]}), 'utf-8', (writeErr) => {
+                            if (writeErr) {
+                                console.log(`Error writing file: ${writeErr}`);
+                            } else {
+                                console.log(`File is written successfully!`);
+                            }
+                        });
+
+                        
+                        response.writeHead(200, {'Content-Type': 'text/plain'});
+                        response.end();
                     }
                     else {
                         let rankings = JSON.parse(fileData);
@@ -129,7 +159,7 @@ const server = http.createServer(function (request, response) {
 
                         fs.writeFile('./ranking.json', JSON.stringify({ranking:read_values}), 'utf-8', (writeErr) => {
                             if (writeErr) {
-                                console.log(`Error writing file: ${err}`);
+                                console.log(`Error writing file: ${writeErr}`);
                             } else {
                                 console.log(`File is written successfully!`);
                             }
