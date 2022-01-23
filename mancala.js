@@ -358,7 +358,6 @@ function setPlay() {
             else {
                 if (player) {
                     clearTimeout(timeoutID);
-                    console.log("BEF NOTIFY");
                     notify(username, password, onlineGame, i);
                     timeoutID = setTimeout(() => {execute_leave()}, 120000) //Tempo certo: 120 000
                 }
