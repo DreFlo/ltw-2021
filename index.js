@@ -92,7 +92,53 @@ const server = http.createServer(function (request, response) {
                         response.end(JSON.stringify({ranking:values_to_send}));
                     }
                 });
+                break;
+            case '/saveRanking':
+                console.log('Save Ranking request');
+                fs.readFile('./ranking.json', 'utf-8', async function (readErr, fileData) {
+                    if(readErr) {
+                        console.log(`Error in reading file: ${err}`);
+                    }
+                    else {
+                        let rankings = JSON.parse(fileData);
+                        let read_values = rankings.ranking;
+                        let curr_user;
+                        let index = -1;
+            
+                        for(let i = 0; i < read_values.length; i++){
+                            if(read_values[i].nick == data.nick){
+                                curr_user = read_values[i];
+                                index = i;
+                                break;
+                            }
+                        }
+                            
+                        //No games before
+                        if(index == -1){
+                            curr_user = {nick:data.nick, victories:0, games:0};
+                        }
+                        
+                        if(data.winner == data.nick){ //Win
+                            curr_user.victories += 1;
+                        }
+            
+                        curr_user.games += 1;
+            
+                        if(index != -1) read_values[index] = curr_user;
+                        else read_values.push(curr_user);
 
+                        fs.writeFile('./ranking.json', JSON.stringify({ranking:read_values}), 'utf-8', (writeErr) => {
+                            if (writeErr) {
+                                console.log(`Error writing file: ${err}`);
+                            } else {
+                                console.log(`File is written successfully!`);
+                            }
+                        });
+
+                        response.writeHead(200, {'Content-Type': 'text/plain'});
+                        response.end();
+                    }
+                });
                 break;
         }
     })
@@ -100,14 +146,3 @@ const server = http.createServer(function (request, response) {
 });
 
 server.listen(PORT);
-
-/*
-fs.readFile('./index.html', function(err, html){
-    if(!err){
-        http.createServer(function(request, response) {
-            response.writeHead(200, {'Content-Type': 'text/html'});
-            response.write(html);
-            response.end();
-        }).listen(PORT);
-    }
-});*/

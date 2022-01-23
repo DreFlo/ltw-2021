@@ -1,4 +1,3 @@
-
 const server = 'http://twserver.alunos.dcc.fc.up.pt:8008/';
 const ourServer = 'http://localhost:9066/';
 
@@ -109,6 +108,22 @@ async function ranking(){
         class_row_victories.innerHTML = entry.victories;
         class_row_games.innerHTML = entry.games;
     });
+}
+
+async function saveRanking(nick, winner){
+    const url = ourServer + 'saveRanking';
+
+    const request = fetch(url, {
+        method: 'POST',
+        body: JSON.stringify({
+            'nick': nick,
+            'winner': winner
+        })
+    });
+
+    const response = await request;
+
+    return;
 }
 
 // account - up201907001 pass

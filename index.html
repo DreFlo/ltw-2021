@@ -61,7 +61,6 @@
                 </tr>
                 <tr class="config_row">
                     <td class="config_cell"> Game mode </td>
-                    <!--<td class="config_cell"><input class="config_number_select" id=game_mode type="number" value="0" min="0" max="3" step="1"></td>-->
                     <td class="config_cell">
                         <select class="config_number_select" name="game_mode" id="game_mode">
                             <option class="config_number_select" value="3">Player Vs. Player Online</option>
@@ -72,14 +71,6 @@
                     </td>
                 </tr>
             </table>
-            <!--
-            <p class = "second_title">Number of houses per player:
-                <input class="config_number_select" id="houses_number" type="number" value="5" min="3" max="7" step="1">
-            </p>
-            <p class = "second_title">Number of starting seeds per house:
-                <input class="config_number_select" id="seeds_number" type="number" value="8" min="4" max="16" step="1">
-            </p>
-            -->
             <span class="config_close" id="start_game_button">Start Game</span>
         </div>
     </div>
@@ -121,6 +112,7 @@
 
     <section id="leaderboard">
         <logo>Mancala!</logo>
+        <p id="winner_space"></p>
         <table id="classification">
             <tr class="class_row">
                 <th class="class_head"> Nick </th>

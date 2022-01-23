@@ -1,12 +1,3 @@
-
-/*
-async function func() {
-    let game_1 = await join(66, 'up201907001', 'pass', 8, 8);
-    let src_1 = update('up201907001', game_1);
-    let game_2 = await join(66, 'up201907014', 'pass', 8, 8);
-    let src_2 = update('up201907014', game_2);
-}*/
-
 // Get the modal
 let inst_modal = document.getElementById("instructions");
         
@@ -44,15 +35,7 @@ let login_section = document.getElementById("identification");
 window.onload = function() {
     login_section.scrollIntoView();
     config_modal.style.display = "block";
-    ranking();
 }
-
-
-/*var tds = document.querySelector(".classification td");
-
-for(let i = 0; i < tds.length(); i++){
-    tds[i].classList.add(tds[i].innerText);
-}*/
 
 /* Game Logic */
 
@@ -64,7 +47,6 @@ const ONLINE = 3;
 
 function getRandomInt(max) {
     let temp = Math.floor(Math.random() * max);
-    //console.log("Generated " + temp.toString());
     return temp;
 }
 
@@ -314,6 +296,8 @@ let ranking_section = document.getElementById("leaderboard");
 
 let leaveButton = document.getElementById("leave_button");
 
+let winner_space = document.getElementById("winner_space");
+
 let game = undefined;
 
 let player = true;
@@ -374,8 +358,9 @@ function setPlay() {
             else {
                 if (player) {
                     clearTimeout(timeoutID);
+                    console.log("BEF NOTIFY");
                     notify(username, password, onlineGame, i);
-                    timeoutID = setTimeout(() => {execute_leave()}, 10000) //Tempo certo: 120 000
+                    timeoutID = setTimeout(() => {execute_leave()}, 120000) //Tempo certo: 120 000
                 }
             }
         };
@@ -417,15 +402,21 @@ function checkWinner() {
         // Player ganha - do smth
         console.log("Player wins!");
         updateLeaderboard("Player", game.playerRow.getTotal());
+        winner_space.innerHTML = "Player Won!"
+        ranking_section.scrollIntoView();
     }
     else if (game.playerRow.getTotal() < game.adversaryRow.getTotal()) {
         // Adversary ganha - do smth
         console.log("Adversary wins!");
         updateLeaderboard("Adversary", game.adversaryRow.getTotal());
+        winner_space.innerHTML = "Adversary Won!"
+        ranking_section.scrollIntoView();
     }
     else {
         // Tie
         console.log("Tie!");
+        winner_space.innerHTML = "It's a Tie!"
+        ranking_section.scrollIntoView();
     }
 }
 
@@ -560,7 +551,7 @@ loginButton.onclick = async function() {
         game_section.scrollIntoView();
         onlineGame = await join(66, username, password, houseNumber, seedNumber);
         evtSource = update(username, onlineGame, errorFunc);
-        timeoutID = setTimeout(() => {execute_leave()}, 10000); //Tempo certo: 120 000
+        timeoutID = setTimeout(() => {execute_leave()}, 120000)
     }
     else{
         failure.innerHTML = reg;
@@ -588,6 +579,7 @@ registerButton.onclick = async function() {
 
 startGameButton.onclick = function () {
     setGameMode();
+    if(gameMode != ONLINE) game_section.scrollIntoView();
     setPlay();
     config_modal.style.display = "none";
 }
@@ -616,7 +608,18 @@ function handleBoard(board) {
 
 function handleEventMessage(message) {
     if (message.hasOwnProperty('winner')) {
-        execute_leave();
+        clearTimeout(timeoutID);
+
+        if(message.winner != username){
+            setTimeout(() => {end_game(message.winner)}, 2000);
+            winner_space.innerHTML = "You Lost!"
+        }
+        else{
+            winner_space.innerHTML = "Congratulations! You won!"
+            end_game(message.winner);
+        }
+
+        setTimeout(() => {get_ranking()}, 5000);
     } 
     else if (message.hasOwnProperty('board')) {
         handleBoard(message.board);
@@ -625,7 +628,6 @@ function handleEventMessage(message) {
 
 async function errorFunc() {
     game = undefined;
-    evtSource.close();
     evtSource = undefined;
     console.log("Error in update");
 }
@@ -638,13 +640,17 @@ leaveButton.onclick = function () {
 
 async function execute_leave() {
     leave(username, password, onlineGame);
-    evtSource.close();
+    saveRanking(username, -1);
     get_ranking();
 }
 
-function get_ranking() {
-    game_section.scrollIntoView();
-    ranking();
+async function get_ranking() {
+    ranking_section.scrollIntoView();
+    await ranking();
+}
+
+async function end_game(winner) {
+    await saveRanking(username, winner);
 }
 
 /* Leaderboard */

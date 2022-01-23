@@ -329,6 +329,18 @@ logo {
     border: 2px solid #200d00;
 }
 
+#winner_space {
+    font-size: xx-large;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    color: rgb(184, 11, 11);
+    position: absolute;
+    margin-top: 15%;
+    background-color: #24160d;
+    background-size: 32px 32px;
+    background-image: repeating-linear-gradient(135deg, #180e09 0, #180e09 1px, #24160d 0, #24160d 50%);
+    border: 2px solid #200d00;
+}
+
 playAIButton {
     /*border: 3px solid brown;*/
     color: white;
